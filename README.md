@@ -1,4 +1,5 @@
 # ImpactLink
+
 ## 📌 Project Overview
 
 This is a crowdfunding platform built using **React** for the frontend. The platform allows users to explore campaigns, create their own, and contribute to existing ones. It features authentication, campaign management, and a modern UI.
@@ -49,12 +50,12 @@ root/
 - 🔹 Adding payment gateway integration for donations.
 - 🔹 Responsive design improvements.
 
-## 🚧 How to Run the Project
+## 🛠 How to Run the Project
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/crowdfunding-platform.git
-   cd crowdfunding-platform
+   git clone https://github.com/atharvashivari/ImpactLink.git
+   cd ImpactLink
    ```
 2. **Install dependencies:**
    ```sh
@@ -65,7 +66,7 @@ root/
    npm start
    ```
 
-## 🔧 Troubleshooting
+## 🛠 Troubleshooting
 
 - If `react-icons` is missing, install it using:
   ```sh
@@ -87,7 +88,7 @@ root/
 
 ### 📌 Maintainer: **Atharva Shivari**
 
-### 📧 Contact: 
- ** Github: https\://github.com/atharvashivari
- **Email : shivariatharva@gmail.com
+### 💎 Contact:
+-  Github: https://github.com/atharvashivari  
+-  Email : shivariatharva@gmail.com
 
