@@ -88,6 +88,6 @@ root/
 ### 📌 Maintainer: **Atharva Shivari**
 
 ### 📧 Contact: 
-## Github: https\://github.com/atharvashivari
-## Email : shivariatharva@gmail.com
+ ** Github: https\://github.com/atharvashivari
+ **Email : shivariatharva@gmail.com
 
