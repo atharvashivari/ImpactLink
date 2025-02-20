@@ -87,5 +87,7 @@ root/
 
 ### 📌 Maintainer: **Atharva Shivari**
 
-### 📧 Contact: https\://github.com/atharvashivari
+### 📧 Contact: 
+## Github: https\://github.com/atharvashivari
+## Email : shivariatharva@gmail.com
 
