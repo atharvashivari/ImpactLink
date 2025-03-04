@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Campaign = require("../models/Campaign");
+const auth = require("../middleware/auth");
+const verifyToken = require("../middleware/auth");
 
-router.get("/", (req, res) => {
-    res.json({ message: "Campaigns route is working!" });
-  });
-  
+
 // Create a campaign
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
     try {
       const { title, description, goalAmount, creator } = req.body;
       const newCampaign = new Campaign({ title, description, goalAmount, creator });
@@ -20,7 +19,7 @@ router.post("/", async (req, res) => {
 
 
 // Get all campaigns
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const campaigns = await Campaign.find();
     res.json(campaigns);

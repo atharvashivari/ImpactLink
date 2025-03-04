@@ -12,14 +12,14 @@ app.use(express.json()); // To parse JSON data
 app.use(express.urlencoded({ extended: true })); // To parse form data
 
 // Import routes
-const userRoutes = require("./routes/user");
+const authRoutes = require("./routes/auth");
 const campaignRoutes = require("./routes/campaign");
 const donationRoutes = require("./routes/donation");
 const paymentRoutes = require("./routes/payment");
 const queryRoutes = require("./routes/query");
 
 // Use routes
-app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/donations", donationRoutes);
 app.use("/api/payments", paymentRoutes);
