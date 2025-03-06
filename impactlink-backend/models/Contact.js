@@ -7,4 +7,4 @@ const querySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Query", querySchema);
+module.exports = mongoose.model("Contact", querySchema);

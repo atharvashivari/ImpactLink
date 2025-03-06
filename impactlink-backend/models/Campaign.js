@@ -9,6 +9,9 @@ const CampaignSchema = new mongoose.Schema(
     creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     backers: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, amount: Number }],
     status: { type: String, enum: ["active", "completed", "cancelled"], default: "active" },
+    image: { type: String, required: true }, // Storing the image URL
+    startDate: { type: Date, required: true }, // Add startDate
+    endDate: { type: Date, required: true }, // Add endDate
   },
   { timestamps: true }
 );
