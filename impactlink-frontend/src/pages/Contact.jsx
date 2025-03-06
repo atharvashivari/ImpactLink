@@ -91,14 +91,6 @@ const Contact = () => {
             <p><strong>Email:</strong> support@crowdfund.com</p>
             <p><strong>Phone:</strong> +123 456 7890</p>
             <p><strong>Address:</strong> 123 Crowdfund Street, New York, NY</p>
-
-            {/* Social Media Links */}
-            <div className="mt-3">
-              <h5>Follow Us</h5>
-              <a href="#" className="btn btn-outline-dark me-2">Facebook</a>
-              <a href="#" className="btn btn-outline-dark me-2">Twitter</a>
-              <a href="#" className="btn btn-outline-dark">Instagram</a>
-            </div>
           </div>
         </div>
       </div>
