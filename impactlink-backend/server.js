@@ -16,14 +16,16 @@ const authRoutes = require("./routes/auth");
 const campaignRoutes = require("./routes/campaign");
 const donationRoutes = require("./routes/donation");
 const paymentRoutes = require("./routes/payment");
-const queryRoutes = require("./routes/query");
+const contactRoutes = require("./routes/contact");
+const dashboardRoutes = require("./routes/dashboard");
 
 // Use routes
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/donations", donationRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/queries", queryRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api", dashboardRoutes);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;
@@ -62,5 +64,6 @@ app.use("*", (req, res) => {
     res.status(404).json({ error: "Not Found" });
   });
 
-console.log("Campaign Routes Loaded:", campaignRoutes);
 
+  
+  

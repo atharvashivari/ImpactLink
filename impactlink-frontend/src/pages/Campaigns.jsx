@@ -1,80 +1,133 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 
 const Campaigns = () => {
-  // Placeholder data for campaigns
-  const campaigns = [
-    {
-      id: 1,
-      title: "Save the Rainforest",
-      category: "Environment",
-      image: "https://onetreeplanted.org/cdn/shop/articles/amazon_rainforest_mist_1350x.png?v=1680706265",
-      goal: "$50,000",
-      raised: "$35,000",
-    },
-    {
-      id: 2,
-      title: "Tech for Kids",
-      category: "Education",
-      image: "https://tech.analyticsinsight.net/wp-content/uploads/2023/11/Top-10-Outstanding-Tech-Gadgets-for-Kids-in-2023.jpg",
-      goal: "$20,000",
-      raised: "$10,500",
-    },
-    {
-      id: 3,
-      title: "Disaster Relief Fund",
-      category: "Charity",
-      image: "https://images-platform.99static.com/L2QgE5sy_j_sv5xbpoik9jHHdL8=/500x500/top/smart/99designs-contests-attachments/12/12841/attachment_12841638",
-      goal: "$100,000",
-      raised: "$70,000",
-    },
-  ];
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("Unauthorized: Please log in to view campaigns.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/api/campaigns", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          throw new Error("Unauthorized: Your session may have expired. Please log in again.");
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Error ${response.status}: ${errorData.msg || "Failed to fetch campaigns"}`);
+        }
+
+        const data = await response.json();
+        console.log("✅ Campaigns Fetched:", data);
+        setCampaigns(data);
+      } catch (err) {
+        console.error("⛔ Fetch Error:", err.message);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  // Sorting Function
+  const getSortedCampaigns = () => {
+    let sortedCampaigns = [...campaigns];
+
+    if (filter === "trending") {
+      sortedCampaigns.sort((a, b) => b.raisedAmount - a.raisedAmount);
+    } else if (filter === "new") {
+      sortedCampaigns.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    } else if (filter === "highest") {
+      sortedCampaigns.sort((a, b) => b.goalAmount - a.goalAmount);
+    }
+
+    return sortedCampaigns;
+  };
 
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">Explore Campaigns</h2>
 
-      {/* Filter Options */}
+      {/* Filter Buttons */}
       <div className="d-flex justify-content-center mb-4">
-        <button className="btn btn-outline-primary me-2">Trending</button>
-        <button className="btn btn-outline-primary me-2">New</button>
-        <button className="btn btn-outline-primary">Highest Funded</button>
+        <button className="btn btn-outline-primary me-2" onClick={() => setFilter("trending")}>
+          Trending
+        </button>
+        <button className="btn btn-outline-primary me-2" onClick={() => setFilter("new")}>
+          New
+        </button>
+        <button className="btn btn-outline-primary" onClick={() => setFilter("highest")}>
+          Highest Funded
+        </button>
       </div>
 
+      {/* Loading and Error Handling */}
+      {loading && <p className="text-center">Loading campaigns...</p>}
+      {error && <p className="alert alert-danger text-center">{error}</p>}
+
       {/* Campaign Grid */}
-      <div className="row">
-        {campaigns.map((campaign) => (
-          <div key={campaign.id} className="col-md-4 mb-4">
-            <div className="card shadow-sm h-100 d-flex flex-column">
-              <img 
-                src={campaign.image} 
-                className="card-img-top" 
-                alt={campaign.title} 
-                style={{ height: "200px", objectFit: "cover" }} 
-              />
-              <div className="card-body d-flex flex-column">
-                <h5 className="card-title">{campaign.title}</h5>
-                <p className="text-muted">{campaign.category}</p>
-                <p>
-                  <strong>Goal:</strong> {campaign.goal}
-                  <br />
-                  <strong>Raised:</strong> {campaign.raised}
-                </p>
-                <div className="mt-auto">
-                    <Link to={`/campaign/${campaign.id}`}>
-                    <button className="btn btn-primary w-100">View Campaign</button>
+      {!loading && campaigns.length > 0 && (
+        <div className="row">
+          {getSortedCampaigns().map((campaign) => (
+            <div key={campaign._id} className="col-md-4 mb-4">
+              <div className="card shadow-sm h-100 d-flex flex-column">
+                <img
+                  src={campaign.image || "https://via.placeholder.com/300"}
+                  className="card-img-top"
+                  alt={campaign.title}
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <div className="card-body d-flex flex-column">
+                  <h5 className="card-title">{campaign.title}</h5>
+                  <p className="text-muted">{campaign.description}</p>
+                  <p>
+                    <strong>Goal:</strong> ${campaign.goalAmount}
+                    <br />
+                    <strong>Raised:</strong> ${campaign.raisedAmount}
+                  </p>
+                  <div className="mt-auto">
+                    <Link to={`/campaign/${campaign._id}`}>
+                      <button className="btn btn-primary w-100">View Campaign</button>
                     </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* No Campaigns Message */}
+      {!loading && campaigns.length === 0 && !error && (
+        <p className="text-center mt-4">No campaigns available.</p>
+      )}
 
       {/* Create Campaign Button */}
       <div className="text-center mt-4">
-        <a href="/create-campaign"><button className="btn btn-success">Create New Campaign</button></a>
+        <Link to="/create-campaign">
+          <button className="btn btn-success">Create New Campaign</button>
+        </Link>
       </div>
     </div>
   );

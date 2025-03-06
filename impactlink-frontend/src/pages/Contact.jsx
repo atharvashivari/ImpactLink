@@ -1,7 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState(null);
+
+  // Handle input change
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/api/contact", formData);
+      setStatus({ success: true, message: res.data.msg });
+      setFormData({ name: "", email: "", message: "" }); // Clear form
+    } catch (error) {
+      setStatus({ success: false, message: error.response?.data?.msg || "Something went wrong" });
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">Get in Touch</h2>
@@ -11,18 +37,47 @@ const Contact = () => {
         <div className="col-md-6">
           <div className="card p-4 shadow-sm">
             <h4>Send Us a Message</h4>
-            <form>
+            {status && (
+              <div className={`alert ${status.success ? "alert-success" : "alert-danger"}`} role="alert">
+                {status.message}
+              </div>
+            )}
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Your Name</label>
-                <input type="text" className="form-control" placeholder="Enter your name" />
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control"
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div className="mb-3">
                 <label className="form-label">Your Email</label>
-                <input type="email" className="form-control" placeholder="Enter your email" />
+                <input
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div className="mb-3">
                 <label className="form-label">Message</label>
-                <textarea className="form-control" rows="4" placeholder="Type your message..."></textarea>
+                <textarea
+                  name="message"
+                  className="form-control"
+                  rows="4"
+                  placeholder="Type your message..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                ></textarea>
               </div>
               <button type="submit" className="btn btn-primary">Send Message</button>
             </form>
