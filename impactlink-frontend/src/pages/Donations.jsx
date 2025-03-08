@@ -2,20 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Donations = () => {
-  const { campaignId } = useParams(); // This should correctly grab campaignId from the URL
+  const { campaignId } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [amount, setAmount] = useState("");
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    console.log("Campaign ID from URL:", campaignId);  // Debugging log
     fetchCampaign();
-  }, [campaignId]);  // Ensure the effect runs whenever campaignId changes
+  }, []);
 
   const fetchCampaign = async () => {
     try {
-      const token = localStorage.getItem("token"); // Make sure to retrieve the token from localStorage
+      const token = localStorage.getItem("token");
       if (!token) {
         setMessage("You need to log in first!");
         return;
@@ -25,7 +23,7 @@ const Donations = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,  // Ensure the token is being sent properly
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -34,48 +32,39 @@ const Donations = () => {
       const data = await response.json();
       setCampaign(data);
     } catch (error) {
-      console.error(error);
       setMessage(error.message);
     }
   };
 
-  const handleDonate = async () => {
+  const handlePayment = async () => {
     if (!amount || amount <= 0) {
-      setMessage("Please enter a valid amount.");
+      alert("❌ Please enter a valid donation amount.");
       return;
     }
 
     try {
-      setLoading(true);
       const token = localStorage.getItem("token");
-      if (!token) {
-        setMessage("You need to log in first!");
-        return;
-      }
-
-      const response = await fetch("http://localhost:5000/api/donations", {
+      const response = await fetch("http://localhost:5000/api/payments/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          campaign: campaignId,
-          donor: "USER_ID", // Replace with actual user ID from auth
-          amount,
-          paymentStatus: "Pending", // Change this once payment is processed
+          campaignId,
+          amount: amount * 100, // Convert to cents
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to process donation");
+      const data = await response.json();
 
-      setMessage("Donation successful! Thank you for your support.");
-      setAmount("");
+      if (!response.ok) {
+        throw new Error(data.error || "Payment initialization failed.");
+      }
+
+      window.location.href = data.checkoutUrl; // Redirect to Stripe checkout
     } catch (error) {
-      setMessage("Error processing donation. Try again.");
-      console.error(error);
-    } finally {
-      setLoading(false);
+      setMessage(error.message);
     }
   };
 
@@ -85,29 +74,22 @@ const Donations = () => {
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <div className="card shadow">
-            <div className="card-body text-center">
-              <h3>{campaign.title}</h3>
-              <p>By: {campaign.creator.name}</p>
-              <p className="text-muted">{campaign.description}</p>
+          <h3>{campaign.title}</h3>
+          <p className="text-muted">{campaign.description}</p>
 
-              <div className="mt-3">
-                <label className="form-label">Enter Donation Amount</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
+          <input
+            type="number"
+            className="form-control"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter donation amount"
+          />
 
-              <button className="btn btn-primary mt-3" onClick={handleDonate} disabled={loading}>
-                {loading ? "Processing..." : "Donate Now"}
-              </button>
+          <button className="btn btn-primary mt-3" onClick={handlePayment}>
+            Donate Now
+          </button>
 
-              {message && <p className="mt-3 text-success">{message}</p>}
-            </div>
-          </div>
+          {message && <p className="mt-3 text-danger">{message}</p>}
         </div>
       </div>
     </div>

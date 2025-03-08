@@ -3,11 +3,11 @@ const Campaign = require("../models/Campaign");
 // Create a campaign
 exports.createCampaign = async (req, res) => {
   try {
-    const { title, description, goalAmount, image, startDate, endDate } = req.body;
+    const { title, description, goalAmount, image, startDate, endDate, razorpayKey } = req.body;
     const creator = req.user.id; // Extract user ID from token
 
     // Validate required fields
-    if (!title || !description || !goalAmount || !image || !startDate || !endDate) {
+    if (!title || !description || !goalAmount || !image || !startDate || !endDate || !razorpayKey ) {
       return res.status(400).json({ error: "All fields are required, including start date and end date" });
     }
 
@@ -25,6 +25,7 @@ exports.createCampaign = async (req, res) => {
       image,
       startDate,
       endDate,
+      razorpayKey,
     });
 
     await newCampaign.save();
