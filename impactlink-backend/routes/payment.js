@@ -1,31 +1,41 @@
 const express = require("express");
+const Stripe = require("stripe");
+require("dotenv").config();
+
 const router = express.Router();
-const Payment = require("../models/Payment");
-const auth = require("../middleware/auth");
-const verifyToken = require("../middleware/auth");
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Process payment
-router.post("/", verifyToken , async (req, res) => {
+router.post("/create-checkout-session", async (req, res) => {
   try {
-    const { userId, campaignId, amount, paymentMethod } = req.body;
-    const payment = new Payment({ userId, campaignId, amount, paymentMethod });
-    await payment.save();
-    res.status(201).json({ msg: "Payment successful", payment });
-  } catch (err) {
-    res.status(500).json({ msg: "Server error", error: err.message });
-  }
-});
+    const { campaignId, amount } = req.body;
 
-router.get("/", verifyToken, async (req, res) => {
-    try {
-        console.log("Fetching payments...");
-        const payments = await Payment.find().populate("campaign donor", "title name");
-        console.log("Payments found:", payments);
-        res.json(payments);
-    } catch (error) {
-        console.error("Error fetching payments:", error.message);
-        res.status(500).json({ msg: "Server error", error: error.message });
+    if (!campaignId || !amount) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "INR",
+            product_data: {
+              name: "Campaign Donation",
+            },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${process.env.FRONTEND_URL}/payment-success`,
+      cancel_url: `${process.env.FRONTEND_URL}/payment-cancel`,
+    });
+
+    res.json({ checkoutUrl: session.url });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;

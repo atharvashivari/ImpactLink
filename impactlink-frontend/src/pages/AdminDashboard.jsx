@@ -1,63 +1,76 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const AdminDashboard = () => {
-  // Mock Data (Just for frontend display)
-  const campaigns = [
-    { id: 1, title: "Education Fund", status: "Pending" },
-    { id: 2, title: "Disaster Relief", status: "Approved" },
-    { id: 3, title: "Animal Shelter Support", status: "Suspended" },
-  ];
+  const [campaigns, setCampaigns] = useState([]);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/admin/dashboard/campaigns", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+      });
+      setCampaigns(res.data);
+    } catch (error) {
+      console.error("Error fetching campaigns", error);
+    }
+  };
+
+  const toggleCampaignStatus = async (id, currentStatus) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/campaigns/${id}`,
+        { isActive: !currentStatus },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
+      );
+      fetchCampaigns(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating campaign", error);
+    }
+  };
+
+  const deleteCampaign = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/campaigns/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+      });
+      fetchCampaigns(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting campaign", error);
+    }
+  };
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">Admin Dashboard</h2>
-
-      {/* Campaigns Table */}
-      <div className="card p-3 shadow-sm">
-        <h4>Manage Campaigns</h4>
-        <table className="table table-striped mt-3">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Actions</th>
+    <div>
+      <h1>Admin Dashboard</h1>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Creator</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {campaigns.map((campaign) => (
+            <tr key={campaign._id}>
+              <td>{campaign.title}</td>
+              <td>{campaign.creator}</td>
+              <td>{campaign.isActive ? "Active" : "Inactive"}</td>
+              <td>
+                <button onClick={() => toggleCampaignStatus(campaign._id, campaign.isActive)}>
+                  {campaign.isActive ? "Deactivate" : "Activate"}
+                </button>
+                <button onClick={() => deleteCampaign(campaign._id)}>Delete</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {campaigns.map((campaign) => (
-              <tr key={campaign.id}>
-                <td>{campaign.id}</td>
-                <td>{campaign.title}</td>
-                <td>
-                  <span
-                    className={
-                      campaign.status === "Approved"
-                        ? "badge bg-success"
-                        : campaign.status === "Pending"
-                        ? "badge bg-warning"
-                        : "badge bg-danger"
-                    }
-                  >
-                    {campaign.status}
-                  </span>
-                </td>
-                <td>
-                  <button className="btn btn-success btn-sm me-2">Approve</button>
-                  <button className="btn btn-danger btn-sm">Remove</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Donation Stats Placeholder */}
-      <div className="card p-3 shadow-sm mt-4">
-        <h4>Donation Overview</h4>
-        <p className="mt-2">Total Donations Collected: <strong>$120,000</strong></p>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

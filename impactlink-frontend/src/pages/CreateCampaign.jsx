@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Import toast notifications
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CreateCampaign = () => {
@@ -11,7 +11,8 @@ const CreateCampaign = () => {
     category: "",
     startDate: "",
     endDate: "",
-    imageUrl: "", // Changed from file to URL
+    imageUrl: "",
+    razorpayKey: "",
   });
 
   const [error, setError] = useState("");
@@ -19,7 +20,11 @@ const CreateCampaign = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setCampaign({ ...campaign, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setCampaign((prevCampaign) => ({
+      ...prevCampaign,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -46,8 +51,8 @@ const CreateCampaign = () => {
           description: campaign.description,
           goalAmount: parseFloat(campaign.goal),
           image: campaign.imageUrl,
-          startDate: campaign.startDate, // Include startDate
-          endDate: campaign.endDate, // Include endDate
+          startDate: campaign.startDate,
+          endDate: campaign.endDate,
         }),
       });
   
@@ -67,7 +72,7 @@ const CreateCampaign = () => {
     }
   };
   
-
+  
   return (
     <div className="container my-5">
       <h2 className="text-center">Create a New Campaign</h2>
@@ -75,25 +80,53 @@ const CreateCampaign = () => {
         <div className="col-md-8">
           <form onSubmit={handleSubmit} className="p-4 shadow rounded bg-white">
             {error && <p className="alert alert-danger">{error}</p>}
-            
+
             <div className="mb-3">
               <label className="form-label">Campaign Title</label>
-              <input type="text" name="title" className="form-control" onChange={handleChange} required />
+              <input
+                type="text"
+                name="title"
+                className="form-control"
+                value={campaign.title}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="mb-3">
               <label className="form-label">Description</label>
-              <textarea name="description" className="form-control" rows="4" onChange={handleChange} required></textarea>
+              <textarea
+                name="description"
+                className="form-control"
+                rows="4"
+                value={campaign.description}
+                onChange={handleChange}
+                required
+              ></textarea>
             </div>
 
             <div className="mb-3">
               <label className="form-label">Funding Goal (₹)</label>
-              <input type="number" name="goal" className="form-control" step="0.01" onChange={handleChange} required />
+              <input
+                type="number"
+                name="goal"
+                className="form-control"
+                step="0.01"
+                value={campaign.goal}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="mb-3">
               <label className="form-label">Category</label>
-              <select name="category" className="form-select" onChange={handleChange} required>
+              <select
+                name="category"
+                className="form-select"
+                value={campaign.category}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Select a category</option>
                 <option value="Technology">Technology</option>
                 <option value="Health">Health</option>
@@ -102,14 +135,30 @@ const CreateCampaign = () => {
               </select>
             </div>
 
-            <div className="mb-3 row">
-              <div className="col-md-6">
+            {/* Start Date and End Date */}
+            <div className="row">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">Start Date</label>
-                <input type="date" name="startDate" className="form-control" onChange={handleChange} required />
+                <input
+                  type="date"
+                  name="startDate"
+                  className="form-control"
+                  value={campaign.startDate}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <div className="col-md-6">
+
+              <div className="col-md-6 mb-3">
                 <label className="form-label">End Date</label>
-                <input type="date" name="endDate" className="form-control" onChange={handleChange} required />
+                <input
+                  type="date"
+                  name="endDate"
+                  className="form-control"
+                  value={campaign.endDate}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
 
@@ -120,6 +169,7 @@ const CreateCampaign = () => {
                 name="imageUrl"
                 className="form-control"
                 placeholder="Enter image URL"
+                value={campaign.imageUrl}
                 onChange={handleChange}
                 required
               />
@@ -128,7 +178,12 @@ const CreateCampaign = () => {
             {campaign.imageUrl && (
               <div className="mb-3 text-center">
                 <h6>Image Preview:</h6>
-                <img src={campaign.imageUrl} alt="Campaign Preview" className="img-fluid rounded" style={{ maxHeight: "200px" }} />
+                <img
+                  src={campaign.imageUrl}
+                  alt="Campaign Preview"
+                  className="img-fluid rounded"
+                  style={{ maxHeight: "200px" }}
+                />
               </div>
             )}
 
