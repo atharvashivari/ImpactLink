@@ -1,16 +1,20 @@
-ImpactLink📌 Project Overview
-ImpactLink is a secure and user-friendly crowdfunding platform designed to help users create, manage, and contribute to fundraising campaigns. The platform includes authentication, campaign management, and secure payment processing using Stripe.
+# ImpactLink
 
-🚀 Tech Stack
-Frontend: React, React Router, Bootstrap
-Backend: Express.js, Node.js
-Database: MongoDB
-Authentication: JWT (JSON Web Tokens)
-Payment Gateway: Stripe
-📂 Project Structure
-php
-Copy
-Edit
+## 📌 Project Overview
+
+This is a crowdfunding platform built using **React** for the frontend. The platform allows users to explore campaigns, create their own, and contribute to existing ones. It features authentication, campaign management, and a modern UI.
+
+## 🚀 Tech Stack
+
+- **Frontend:** React, React Router, Bootstrap
+- **Backend:** Express.js, Node.js
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens)
+- **Payment Gateway:** Stripe
+
+## 📂 Project Structure
+
+```
 root/
 │── frontend/          # React frontend
 │   ├── src/
@@ -28,61 +32,75 @@ root/
 │── public/            # Static assets
 │── package.json       # Dependencies
 │── README.md
-✅ Completed Features
-📌 Home Page with an intuitive UI
-📌 User Authentication (Signup, Login, Logout with JWT)
-📌 Campaign Management (Create, Edit, View, Delete campaigns)
-📌 Admin Dashboard (Manage all campaigns)
-📌 Payment Integration using Stripe
-📌 Dynamic Fund Calculation (Raised amount auto-updates based on successful donations)
-📌 Real-time Search & Filtering for campaigns
-📌 Fully Responsive Design with Bootstrap
-🔄 Work In Progress
-🔹 Enhanced UI improvements
-🔹 Email notifications for campaign updates
-🔹 AI-based campaign recommendations
-🔹 Social media sharing options
-🔹 Multi-currency support
-🛠 How to Run the Project
-Clone the Repository
-sh
-Copy
-Edit
-git clone https://github.com/atharvashivari/CrowdFundify.git
-cd CrowdFundify
-Backend Setup
-sh
-Copy
-Edit
-cd backend
-npm install
-Create a .env file with:
+```
 
-env
-Copy
-Edit
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-STRIPE_SECRET_KEY=your_stripe_secret_key
-Run the backend:
+## ✅ Completed Features
 
-sh
-Copy
-Edit
-npm start
-Frontend Setup
-sh
-Copy
-Edit
-cd ../frontend
-npm install
-npm start
-💡 Future Enhancements
-✅ User Profile & Activity Tracking
-✅ AI-based campaign suggestions
-✅ Dark Mode toggle
-✅ Multi-language support
-📌 Maintainer: Atharva Shivari
-💎 Contact:
-GitHub: @atharvashivari
-Email: shivariatharva@gmail.com
+-📌 **Home Page** with an intuitive UI
+-📌 **User Authentication** (Signup, Login, Logout with JWT)
+-📌 **Campaign Management** (Create, Edit, View, Delete campaigns)
+-📌 **Admin Dashboard** (Manage all campaigns)
+-📌 **Payment Integration** using Stripe
+-📌 **Dynamic Fund Calculation** (Raised amount auto-updates based on successful donations)
+-📌 **Real-time Search & Filtering** for campaigns
+-📌 **Fully Responsive Design** with Bootstrap
+  - Home
+  - About
+  - Contact
+  - Campaigns Listing
+  - Create Campaign
+  - Campaign Details
+  - Dashboard (User & Admin)
+  - Login & Signup
+- 📌 **Bootstrap UI Improvements**
+
+## 🔄 Work In Progress
+
+-🔹 Enhanced UI improvements
+-🔹 Email notifications for campaign updates
+-🔹 AI-based campaign recommendations
+-🔹 Social media sharing options
+-🔹 Multi-currency support
+
+## 🛠 How to Run the Project
+
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/atharvashivari/ImpactLink.git
+   cd ImpactLink
+   ```
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+3. **Start the development server:**
+   ```sh
+   npm start
+   ```
+
+## 🛠 Troubleshooting
+
+- If `react-icons` is missing, install it using:
+  ```sh
+  npm install react-icons
+  ```
+- Restart the dev server if changes are not reflecting:
+  ```sh
+  npm run dev
+  ```
+
+## 💡 Future Enhancements
+
+-✅ User Profile & Activity Tracking
+-✅ AI-based campaign suggestions
+-✅ Dark Mode toggle
+-✅ Multi-language support
+
+---
+
+### 📌 Maintainer: **Atharva Shivari**
+
+### 💎 Contact:
+-  Github: https://github.com/atharvashivari  
+-  Email : shivariatharva@gmail.com
+
