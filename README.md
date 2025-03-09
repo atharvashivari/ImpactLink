@@ -1,94 +1,88 @@
-# ImpactLink
+ImpactLink📌 Project Overview
+ImpactLink is a secure and user-friendly crowdfunding platform designed to help users create, manage, and contribute to fundraising campaigns. The platform includes authentication, campaign management, and secure payment processing using Stripe.
 
-## 📌 Project Overview
-
-This is a crowdfunding platform built using **React** for the frontend. The platform allows users to explore campaigns, create their own, and contribute to existing ones. It features authentication, campaign management, and a modern UI.
-
-## 🚀 Tech Stack
-
-- **Frontend:** React, React Router, Bootstrap
-- **Backend:** (To be integrated)
-- **Database:** (To be integrated)
-
-## 📂 Project Structure
-
-```
+🚀 Tech Stack
+Frontend: React, React Router, Bootstrap
+Backend: Express.js, Node.js
+Database: MongoDB
+Authentication: JWT (JSON Web Tokens)
+Payment Gateway: Stripe
+📂 Project Structure
+php
+Copy
+Edit
 root/
-│── src/
-│   ├── components/    # Reusable UI components (Navbar, Footer, etc.)
-│   ├── pages/         # Individual page components
-│   ├── assets/        # Images and static files
-│   ├── App.js         # Main app entry
-│   ├── index.js       # React entry point
-│── public/
-│── package.json
+│── frontend/          # React frontend
+│   ├── src/
+│   │   ├── components/    # Reusable UI components (Navbar, Footer, etc.)
+│   │   ├── pages/         # Page components (Home, Campaigns, Dashboard, etc.)
+│   │   ├── assets/        # Images and static files
+│   │   ├── App.js         # Main React entry
+│   │   ├── index.js       # React root
+│── backend/           # Express.js backend
+│   ├── models/        # Database models (User, Campaign, Donation)
+│   ├── routes/        # API routes
+│   ├── controllers/   # Business logic
+│   ├── config/        # Config files (DB, JWT, etc.)
+│   ├── index.js       # Express entry point
+│── public/            # Static assets
+│── package.json       # Dependencies
 │── README.md
-```
+✅ Completed Features
+📌 Home Page with an intuitive UI
+📌 User Authentication (Signup, Login, Logout with JWT)
+📌 Campaign Management (Create, Edit, View, Delete campaigns)
+📌 Admin Dashboard (Manage all campaigns)
+📌 Payment Integration using Stripe
+📌 Dynamic Fund Calculation (Raised amount auto-updates based on successful donations)
+📌 Real-time Search & Filtering for campaigns
+📌 Fully Responsive Design with Bootstrap
+🔄 Work In Progress
+🔹 Enhanced UI improvements
+🔹 Email notifications for campaign updates
+🔹 AI-based campaign recommendations
+🔹 Social media sharing options
+🔹 Multi-currency support
+🛠 How to Run the Project
+Clone the Repository
+sh
+Copy
+Edit
+git clone https://github.com/atharvashivari/CrowdFundify.git
+cd CrowdFundify
+Backend Setup
+sh
+Copy
+Edit
+cd backend
+npm install
+Create a .env file with:
 
-## ✅ Completed Features
+env
+Copy
+Edit
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+Run the backend:
 
-- 📌 **Home Page** with a structured layout.
-- 📌 **Navbar** with Bootstrap styling and proper routing.
-- 📌 **Footer** with social media icons and quick links.
-- 📌 **React Router** implemented for page navigation.
-- 📌 **Pages Implemented:**
-  - Home
-  - About
-  - Contact
-  - Campaigns Listing
-  - Create Campaign
-  - Campaign Details
-  - Dashboard (User & Admin)
-  - Login & Signup
-- 📌 **Bootstrap UI Improvements**
-
-## 🔄 Work In Progress
-
-- 🔹 Backend integration for authentication and campaign management.
-- 🔹 Database setup (MongoDB / Firebase / PostgreSQL to be decided).
-- 🔹 Connecting frontend forms to backend API.
-- 🔹 Adding payment gateway integration for donations.
-- 🔹 Responsive design improvements.
-
-## 🛠 How to Run the Project
-
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/atharvashivari/ImpactLink.git
-   cd ImpactLink
-   ```
-2. **Install dependencies:**
-   ```sh
-   npm install
-   ```
-3. **Start the development server:**
-   ```sh
-   npm start
-   ```
-
-## 🛠 Troubleshooting
-
-- If `react-icons` is missing, install it using:
-  ```sh
-  npm install react-icons
-  ```
-- Restart the dev server if changes are not reflecting:
-  ```sh
-  npm run dev
-  ```
-
-## 💡 Future Enhancements
-
-- ✅ Dark Mode toggle
-- ✅ User Profile & Settings Page
-- ✅ Advanced Search & Filters for campaigns
-- ✅ AI-based campaign suggestions
-
----
-
-### 📌 Maintainer: **Atharva Shivari**
-
-### 💎 Contact:
--  Github: https://github.com/atharvashivari  
--  Email : shivariatharva@gmail.com
-
+sh
+Copy
+Edit
+npm start
+Frontend Setup
+sh
+Copy
+Edit
+cd ../frontend
+npm install
+npm start
+💡 Future Enhancements
+✅ User Profile & Activity Tracking
+✅ AI-based campaign suggestions
+✅ Dark Mode toggle
+✅ Multi-language support
+📌 Maintainer: Atharva Shivari
+💎 Contact:
+GitHub: @atharvashivari
+Email: shivariatharva@gmail.com
