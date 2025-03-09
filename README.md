@@ -36,14 +36,14 @@ root/
 
 ## ✅ Completed Features
 
--📌 **Home Page** with an intuitive UI
--📌 **User Authentication** (Signup, Login, Logout with JWT)
--📌 **Campaign Management** (Create, Edit, View, Delete campaigns)
--📌 **Admin Dashboard** (Manage all campaigns)
--📌 **Payment Integration** using Stripe
--📌 **Dynamic Fund Calculation** (Raised amount auto-updates based on successful donations)
--📌 **Real-time Search & Filtering** for campaigns
--📌 **Fully Responsive Design** with Bootstrap
+- 📌 **Home Page** with an intuitive UI
+- 📌 **User Authentication** (Signup, Login, Logout with JWT)
+- 📌 **Campaign Management** (Create, Edit, View, Delete campaigns)
+-  📌 **Admin Dashboard** (Manage all campaigns)
+- 📌 **Payment Integration** using Stripe
+-  📌 **Dynamic Fund Calculation** (Raised amount auto-updates based on successful donations)
+- 📌 **Real-time Search & Filtering** for campaigns
+- 📌 **Fully Responsive Design** with Bootstrap
   - Home
   - About
   - Contact
