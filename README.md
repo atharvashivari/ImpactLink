@@ -56,11 +56,11 @@ root/
 
 ## 🔄 Work In Progress
 
--🔹 Enhanced UI improvements
--🔹 Email notifications for campaign updates
--🔹 AI-based campaign recommendations
--🔹 Social media sharing options
--🔹 Multi-currency support
+- 🔹 Enhanced UI improvements
+- 🔹 Email notifications for campaign updates
+- 🔹 AI-based campaign recommendations
+- 🔹 Social media sharing options
+- 🔹 Multi-currency support
 
 ## 🛠 How to Run the Project
 
@@ -91,10 +91,10 @@ root/
 
 ## 💡 Future Enhancements
 
--✅ User Profile & Activity Tracking
--✅ AI-based campaign suggestions
--✅ Dark Mode toggle
--✅ Multi-language support
+- ✅ User Profile & Activity Tracking
+- ✅ AI-based campaign suggestions
+- ✅ Dark Mode toggle
+- ✅ Multi-language support
 
 ---
 
