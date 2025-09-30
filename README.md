@@ -7,31 +7,43 @@ This is a crowdfunding platform built using **React** for the frontend. The plat
 ## 🚀 Tech Stack
 
 - **Frontend:** React, React Router, Bootstrap
-- **Backend:** (To be integrated)
-- **Database:** (To be integrated)
+- **Backend:** Express.js, Node.js
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens)
+- **Payment Gateway:** Stripe
 
 ## 📂 Project Structure
 
 ```
 root/
-│── src/
-│   ├── components/    # Reusable UI components (Navbar, Footer, etc.)
-│   ├── pages/         # Individual page components
-│   ├── assets/        # Images and static files
-│   ├── App.js         # Main app entry
-│   ├── index.js       # React entry point
-│── public/
-│── package.json
+│── frontend/          # React frontend
+│   ├── src/
+│   │   ├── components/    # Reusable UI components (Navbar, Footer, etc.)
+│   │   ├── pages/         # Page components (Home, Campaigns, Dashboard, etc.)
+│   │   ├── assets/        # Images and static files
+│   │   ├── App.js         # Main React entry
+│   │   ├── index.js       # React root
+│── backend/           # Express.js backend
+│   ├── models/        # Database models (User, Campaign, Donation)
+│   ├── routes/        # API routes
+│   ├── controllers/   # Business logic
+│   ├── config/        # Config files (DB, JWT, etc.)
+│   ├── index.js       # Express entry point
+│── public/            # Static assets
+│── package.json       # Dependencies
 │── README.md
 ```
 
 ## ✅ Completed Features
 
-- 📌 **Home Page** with a structured layout.
-- 📌 **Navbar** with Bootstrap styling and proper routing.
-- 📌 **Footer** with social media icons and quick links.
-- 📌 **React Router** implemented for page navigation.
-- 📌 **Pages Implemented:**
+- 📌 **Home Page** with an intuitive UI
+- 📌 **User Authentication** (Signup, Login, Logout with JWT)
+- 📌 **Campaign Management** (Create, Edit, View, Delete campaigns)
+-  📌 **Admin Dashboard** (Manage all campaigns)
+- 📌 **Payment Integration** using Stripe
+-  📌 **Dynamic Fund Calculation** (Raised amount auto-updates based on successful donations)
+- 📌 **Real-time Search & Filtering** for campaigns
+- 📌 **Fully Responsive Design** with Bootstrap
   - Home
   - About
   - Contact
@@ -44,11 +56,11 @@ root/
 
 ## 🔄 Work In Progress
 
-- 🔹 Backend integration for authentication and campaign management.
-- 🔹 Database setup (MongoDB / Firebase / PostgreSQL to be decided).
-- 🔹 Connecting frontend forms to backend API.
-- 🔹 Adding payment gateway integration for donations.
-- 🔹 Responsive design improvements.
+- 🔹 Enhanced UI improvements
+- 🔹 Email notifications for campaign updates
+- 🔹 AI-based campaign recommendations
+- 🔹 Social media sharing options
+- 🔹 Multi-currency support
 
 ## 🛠 How to Run the Project
 
@@ -79,10 +91,10 @@ root/
 
 ## 💡 Future Enhancements
 
-- ✅ Dark Mode toggle
-- ✅ User Profile & Settings Page
-- ✅ Advanced Search & Filters for campaigns
+- ✅ User Profile & Activity Tracking
 - ✅ AI-based campaign suggestions
+- ✅ Dark Mode toggle
+- ✅ Multi-language support
 
 ---
 
