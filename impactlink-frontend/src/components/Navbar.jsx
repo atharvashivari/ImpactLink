@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { User, ChevronDown } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -78,22 +79,24 @@ function Navbar() {
             {isAuthenticated ? (
               <div className="dropdown" ref={dropdownRef}>
                 <button
-                  className="btn btn-light dropdown-toggle border rounded-pill px-4"
+                  className="btn btn-light dropdown-toggle border rounded-pill px-3 d-flex align-items-center gap-2"
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
-                  Account
+                  <User size={18} />
+                  <span className="fw-medium">{user?.name?.split(" ")[0] || "Account"}</span>
+                  <ChevronDown size={14} />
                 </button>
                 {dropdownOpen && (
                   <ul className="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 show" style={{ borderRadius: "0.75rem" }}>
                     <li>
-                      <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                      <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Profile</Link>
                     </li>
                     <li>
-                      <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)}>Dashboard</Link>
+                      <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Dashboard</Link>
                     </li>
                     <li>
-                      <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                      <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Settings</Link>
                     </li>
                     <li><hr className="dropdown-divider" /></li>
                     <li>

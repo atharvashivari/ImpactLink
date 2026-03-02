@@ -55,15 +55,25 @@ const Home = () => {
           <div className="d-flex justify-content-center gap-3 flex-wrap">
             <a
               href="/create-campaign"
-              className="btn btn-light text-dark px-4 py-3 fs-5 fw-semibold d-inline-flex align-items-center gap-2"
-              style={{ borderRadius: "var(--radius-lg)" }}
+              className="px-4 py-3 fs-5 fw-semibold d-inline-flex align-items-center gap-2 text-decoration-none"
+              style={{
+                borderRadius: "var(--radius-lg)",
+                background: "#ffffff",
+                color: "#0f172a",
+                border: "none",
+              }}
             >
               Start a Campaign <ArrowRight size={20} />
             </a>
             <a
               href="/campaigns"
-              className="btn btn-outline-light px-4 py-3 fs-5"
-              style={{ borderRadius: "var(--radius-lg)", borderWidth: "2px" }}
+              className="px-4 py-3 fs-5 fw-medium text-decoration-none"
+              style={{
+                borderRadius: "var(--radius-lg)",
+                background: "var(--primary-color)",
+                color: "#ffffff",
+                border: "none",
+              }}
             >
               Discover
             </a>
