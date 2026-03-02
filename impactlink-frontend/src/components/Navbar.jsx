@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 function Navbar() {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -14,9 +14,8 @@ function Navbar() {
 
   // Logout function
   const handleLogout = () => {
-    localStorage.clear();
-    setIsAuthenticated(false);
-    setDropdownOpen(false); // Close dropdown after logout
+    logout();
+    setDropdownOpen(false);
     navigate("/");
   };
 
@@ -34,12 +33,16 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3">
+    <nav className="navbar navbar-expand-lg bg-white border-bottom py-3">
       <div className="container">
-        <Link className="navbar-brand fw-bold fs-4" to="/">ImpactLink</Link>
+        <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" to="/">
+          {/* Placeholder for logo icon */}
+          <div className="bg-primary rounded-circle" style={{ width: "24px", height: "24px" }}></div>
+          <span className="text-dark">ImpactLink</span>
+        </Link>
 
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-0"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
@@ -51,58 +54,56 @@ function Navbar() {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav mx-auto">
             <li className="nav-item">
-              <Link className="nav-link fs-5" to="/">Home</Link>
+              <Link className="nav-link text-dark fw-medium mx-2" to="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fs-5" to="/campaigns">Campaigns</Link>
+              <Link className="nav-link text-dark fw-medium mx-2" to="/campaigns">Discover</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fs-5" to="/create-campaign">Start a Campaign</Link>
+              <Link className="nav-link text-dark fw-medium mx-2" to="/create-campaign">Start a Campaign</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fs-5" to="/about">About</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link fs-5" to="/contact">Contact</Link>
+              <Link className="nav-link text-dark fw-medium mx-2" to="/about">About Us</Link>
             </li>
             {userRole === "admin" && (
               <li className="nav-item">
-                <Link className="nav-link fs-5 text-warning" to="/admin-dashboard">Admin Dashboard</Link>
+                <Link className="nav-link text-primary fw-medium mx-2" to="/admin-dashboard">Admin Dashboard</Link>
               </li>
             )}
           </ul>
 
-          <div className="d-flex ms-3">
+          <div className="d-flex ms-auto">
             {isAuthenticated ? (
               <div className="dropdown" ref={dropdownRef}>
                 <button
-                  className="btn btn-outline-light dropdown-toggle fs-5"
+                  className="btn btn-light dropdown-toggle border rounded-pill px-4"
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
                   Account
                 </button>
                 {dropdownOpen && (
-                  <ul className="dropdown-menu dropdown-menu-end show">
+                  <ul className="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 show" style={{ borderRadius: "0.75rem" }}>
                     <li>
-                      <Link className="dropdown-item" to="/profile">Profile</Link>
+                      <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>
                     </li>
                     <li>
-                      <Link className="dropdown-item" to="/dashboard">My Campaigns</Link>
+                      <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)}>Dashboard</Link>
                     </li>
                     <li>
-                      <button className="dropdown-item text-danger" onClick={handleLogout}>Logout</button>
+                      <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                    </li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button className="dropdown-item text-danger py-2" onClick={handleLogout}>Logout</button>
                     </li>
                   </ul>
                 )}
               </div>
             ) : (
-              <>
-                <Link className="btn btn-outline-light me-2 fs-5" to="/login">Login</Link>
-                <Link className="btn btn-primary fs-5" to="/signup">Sign Up</Link>
-              </>
+              <Link className="btn btn-primary-custom rounded-pill px-4 shadow-sm" to="/login">Login/Signup</Link>
             )}
           </div>
         </div>

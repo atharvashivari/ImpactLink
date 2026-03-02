@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useAuth } from "../context/AuthContext"; // ✅ Import global auth context
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth(); // ✅ Access global auth state
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,60 +18,63 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const response = await api.post("/auth/login", { email, password });
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      login(response.data.token, response.data.user);
 
-      setIsAuthenticated(true); // ✅ Trigger re-render for logout button
-
-      navigate("/dashboard"); // ✅ Redirect after login
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password.");
+      setError(err.response?.data?.msg || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card shadow-lg p-4" style={{ width: "350px" }}>
-        <h3 className="text-center mb-3">Login</h3>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h3 className="text-center fw-bold mb-4">User Login</h3>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger py-2">{error}</div>}
 
         <form onSubmit={handleLogin}>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
+          <div className="mb-4">
+            <label className="label-custom">Email</label>
             <input
               type="email"
-              className="form-control"
-              placeholder="Enter your email"
+              className="input-custom"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">Password</label>
+          <div className="mb-4">
+            <label className="label-custom">Password</label>
             <input
               type="password"
-              className="form-control"
-              placeholder="Enter your password"
+              className="input-custom"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          <div className="text-end mb-3">
+            <a href="/forgot-password" className="text-primary small fw-medium text-decoration-none">
+              Forgot Password?
+            </a>
+          </div>
+
+          <button type="submit" className="btn-primary-custom w-100 mt-2" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-center mt-3">
-          Don't have an account? <a href="/signup" className="text-decoration-none">Sign Up</a>
+        <p className="text-center text-muted small mt-4 pt-3 border-top">
+          Don't have an account? <a href="/signup" className="text-primary fw-medium">Sign Up</a>
         </p>
       </div>
     </div>

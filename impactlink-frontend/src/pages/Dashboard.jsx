@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { LayoutDashboard, User, List, Settings, LogOut } from "lucide-react";
 
 const Dashboard = () => {
   const [myCampaigns, setMyCampaigns] = useState([]);
@@ -11,9 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       const token = localStorage.getItem("token");
-
       if (!token) {
-        alert("You need to log in first!");
         navigate("/login");
         return;
       }
@@ -24,17 +23,14 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data.");
-        }
+        if (!response.ok) throw new Error("Failed to fetch data.");
 
         const data = await response.json();
-
         setMyCampaigns(Array.isArray(data.myCampaigns) ? data.myCampaigns : []);
         setMyContributions(Array.isArray(data.myContributions) ? data.myContributions : []);
       } catch (error) {
         console.error("Dashboard Error:", error);
-        setError("Unable to load dashboard. Please try again later.");
+        setError("Unable to load dashboard.");
       } finally {
         setLoading(false);
       }
@@ -43,50 +39,165 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [navigate]);
 
-  if (loading) return <div className="container my-5 text-center"><h4>Loading...</h4></div>;
-  if (error) return <div className="container my-5 text-center text-danger"><h4>{error}</h4></div>;
+  if (loading) return <div className="d-flex justify-content-center align-items-center vh-100"><div className="spinner-border text-primary"></div></div>;
+
+  // Calculate totals
+  const totalRaised = myCampaigns.reduce((sum, camp) => sum + (Number(camp.raisedAmount) || 0), 0);
+  const totalDonated = myContributions.reduce((sum, cont) => sum + (Number(cont.amount) || 0), 0);
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center">Dashboard</h2>
+    <div className="container-fluid bg-light min-vh-100 p-0">
+      <div className="row g-0">
 
-      {/* Fundraiser Section */}
-      <div className="row my-4">
-        <div className="col-md-6">
-          <h4>My Campaigns</h4>
-          {myCampaigns.length > 0 ? (
-            <div className="list-group">
-              {myCampaigns.map((campaign, index) => (
-                <div key={index} className="list-group-item">
-                  <h5>{campaign.title}</h5>
-                  <p>Raised: ₹{campaign.raisedAmount} / Goal: ₹{campaign.goal}</p>
-                  <span className={`badge ${campaign.status === "Completed" ? "bg-success" : "bg-warning"}`}>
-                    {campaign.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted">No campaigns created yet.</p>
-          )}
+        {/* Sidebar */}
+        <div className="col-auto col-md-3 col-lg-2 bg-white border-end min-vh-100 py-4 custom-sidebar">
+          <div className="d-flex flex-column h-100 px-3">
+            <h5 className="fw-bold mb-4 text-dark px-2 d-none d-md-block">ImpactLink</h5>
+
+            <ul className="nav flex-column mb-auto">
+              <li className="nav-item mb-2">
+                <Link to="/dashboard" className="nav-link active rounded d-flex align-items-center gap-2" style={{ backgroundColor: "#EFF6FF", color: "#2563EB" }}>
+                  <LayoutDashboard size={20} />
+                  <span className="d-none d-md-inline">Dashboard</span>
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/profile" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                  <User size={20} />
+                  <span className="d-none d-md-inline">Account</span>
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/campaigns" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                  <List size={20} />
+                  <span className="d-none d-md-inline">Discover</span>
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <a href="#" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                  <Settings size={20} />
+                  <span className="d-none d-md-inline">Settings</span>
+                </a>
+              </li>
+            </ul>
+
+            <button className="btn btn-light mt-auto d-flex align-items-center gap-2 text-danger border-0 justify-content-md-start justify-content-center"
+              onClick={() => { localStorage.clear(); navigate('/'); }}>
+              <LogOut size={20} />
+              <span className="d-none d-md-inline">Logout</span>
+            </button>
+          </div>
         </div>
 
-        {/* Backer Section */}
-        <div className="col-md-6">
-          <h4>My Contributions</h4>
-          {myContributions.length > 0 ? (
-            <div className="list-group">
-              {myContributions.map((contribution, index) => (
-                <div key={index} className="list-group-item">
-                  <h5>{contribution.title}</h5>
-                  <p>Amount: ₹{contribution.amount}</p>
-                  <small className="text-muted">Date: {new Date(contribution.date).toLocaleDateString()}</small>
-                </div>
-              ))}
+        {/* Main Content */}
+        <div className="col p-4 p-md-5 overflow-auto" style={{ maxHeight: "100vh" }}>
+
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h2 className="fw-bold m-0">Dashboard</h2>
+            <Link to="/create-campaign" className="btn-primary-custom d-flex align-items-center gap-2">
+              <span>+</span> New Campaign
+            </Link>
+          </div>
+
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          {/* Top Stats Cards */}
+          <div className="row g-4 mb-5">
+            <div className="col-md-4">
+              <div className="custom-card p-4 h-100">
+                <p className="text-muted mb-1 fw-medium">My Campaigns</p>
+                <h3 className="fw-bold mb-0">{myCampaigns.length}</h3>
+                <small className="text-success mt-2 d-block">Active fundraising</small>
+              </div>
             </div>
-          ) : (
-            <p className="text-muted">You haven't contributed to any campaigns yet.</p>
-          )}
+            <div className="col-md-4">
+              <div className="custom-card p-4 h-100">
+                <p className="text-muted mb-1 fw-medium">Total Raised</p>
+                <h3 className="fw-bold mb-0 text-success">₹{totalRaised.toLocaleString()}</h3>
+                <small className="text-muted mt-2 d-block">Across all campaigns</small>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="custom-card p-4 h-100">
+                <p className="text-muted mb-1 fw-medium">My Donations</p>
+                <h3 className="fw-bold mb-0">₹{totalDonated.toLocaleString()}</h3>
+                <small className="text-muted mt-2 d-block">{myContributions.length} contributions made</small>
+              </div>
+            </div>
+          </div>
+
+          <div className="row g-4">
+            {/* Left Column: My Campaigns */}
+            <div className="col-lg-7">
+              <div className="custom-card p-4 h-100">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h5 className="fw-bold m-0">My Campaigns</h5>
+                </div>
+
+                {myCampaigns.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table table-borderless align-middle">
+                      <thead className="border-bottom">
+                        <tr>
+                          <th className="text-muted fw-medium pb-3">Campaign</th>
+                          <th className="text-muted fw-medium pb-3">Raised</th>
+                          <th className="text-muted fw-medium pb-3">Goal</th>
+                          <th className="text-muted fw-medium pb-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {myCampaigns.map((camp, idx) => (
+                          <tr key={idx} className="border-bottom">
+                            <td className="py-3">
+                              <p className="mb-0 fw-medium text-dark">{camp.title}</p>
+                            </td>
+                            <td className="py-3 fw-medium">₹{(Number(camp.raisedAmount) || 0).toLocaleString()}</td>
+                            <td className="py-3 text-muted">₹{(Number(camp.goal) || 0).toLocaleString()}</td>
+                            <td className="py-3">
+                              <span className={`badge rounded-pill ${camp.status === 'Completed' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary'}`}>
+                                {camp.status || 'Active'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-5">
+                    <p className="text-muted mb-3">You haven't created any campaigns yet.</p>
+                    <Link to="/create-campaign" className="btn-outline-custom">Create your first campaign</Link>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column: Contributions */}
+            <div className="col-lg-5">
+              <div className="custom-card p-4 h-100">
+                <h5 className="fw-bold mb-4">Recent Contributions</h5>
+                {myContributions.length > 0 ? (
+                  <ul className="list-unstyled mb-0">
+                    {myContributions.map((cont, idx) => (
+                      <li key={idx} className="d-flex align-items-center justify-content-between py-3 border-bottom">
+                        <div>
+                          <p className="mb-0 fw-medium text-dark">{cont.title || 'Campaign Donation'}</p>
+                          <small className="text-muted">{new Date(cont.date || Date.now()).toLocaleDateString()}</small>
+                        </div>
+                        <div className="fw-bold text-success">
+                          +₹{(Number(cont.amount) || 0).toLocaleString()}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-muted">No contributions yet.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

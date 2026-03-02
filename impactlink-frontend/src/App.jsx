@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -7,34 +7,30 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminLogin from "./pages/AdminLogin";  // Added Admin Login Page
+import AdminLogin from "./pages/AdminLogin";
 import CreateCampaign from "./pages/CreateCampaign";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetails from "./pages/CampaignDetails";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 import { AuthProvider } from "./context/AuthContext";
 import Donations from "./pages/Donations";
-
-const AdminProtectedRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const adminToken = localStorage.getItem("adminToken");
-    setIsAuthenticated(!!adminToken);
-  }, []);
-
-  return isAuthenticated ? children : <Navigate to="/admin/login" />;
-};
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Navbar />
-        <div className="content">
+
+        {/* THIS is the fix: The container wraps the Routes, centering all pages */}
+        <div className="page-container">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
@@ -44,24 +40,35 @@ function App() {
             <Route path="/campaign/:id" element={<CampaignDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
             <Route path="/donate/:campaignId" element={<Donations />} />
 
-            {/* Protected User Routes */}
+            {/* User Protected Routes */}
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-campaign" element={<CreateCampaign />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
 
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/admindashboard" element={
-                <AdminProtectedRoute>
-                  <AdminDashboard />
-                </AdminProtectedRoute>
-              }
-            />
+            <Route path="/adminLogin" element={<Navigate to="/admin/login" />} />
+            <Route path="/adminlogin" element={<Navigate to="/admin/login" />} />
+            <Route path="/admin-login" element={<Navigate to="/admin/login" />} />
+
+            {/* We use the AdminRoute component we fixed earlier */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/admindashboard" element={<AdminDashboard />} />
+            </Route>
+
+            {/* Catch-all Route for Typos */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
+
         <Footer />
       </Router>
     </AuthProvider>

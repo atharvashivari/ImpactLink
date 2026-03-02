@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Campaign = require("../models/Campaign"); // Ensure the path is correct
-const authMiddleware = require("../middleware/auth"); // Ensure authentication middleware is applied
+const { verifyToken: authMiddleware } = require("../middleware/auth"); // Ensure authentication middleware is applied
 
 router.get("/dashboard", authMiddleware, async (req, res) => {
   try {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 
 const AdminLogin = () => {
     const navigate = useNavigate();
@@ -27,7 +27,7 @@ const AdminLogin = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:5000/api/admin/login", {
+            const response = await api.post("/admin/login", {
                 username,
                 password,
             });
@@ -35,7 +35,7 @@ const AdminLogin = () => {
             if (response.data.token) {
                 localStorage.setItem("adminToken", response.data.token);
                 navigate("/admin/admindashboard", { replace: true });
-            } 
+            }
         } catch (err) {
             setError("Invalid credentials");
         }
@@ -51,44 +51,42 @@ const AdminLogin = () => {
     }
 
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-body">
-                            <h3 className="card-title text-center mb-4">Admin Login</h3>
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <form onSubmit={handleLogin}>
-                                <div className="mb-3">
-                                    <label className="form-label">Username</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Password</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <button type="submit" className="btn btn-primary w-100">
-                                    Login
-                                </button>
-                            </form>
-                        </div>
+        <div className="auth-container">
+            <div className="auth-card">
+                <h3 className="text-center fw-bold mb-4">Admin Login</h3>
+
+                {error && <div className="alert alert-danger py-2">{error}</div>}
+
+                <form onSubmit={handleLogin}>
+                    <div className="mb-4">
+                        <label className="label-custom">Username</label>
+                        <input
+                            type="text"
+                            className="input-custom"
+                            placeholder="admin"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
                     </div>
-                </div>
+                    <div className="mb-4">
+                        <label className="label-custom">Password</label>
+                        <input
+                            type="password"
+                            className="input-custom"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="btn-primary-custom w-100 mt-2">
+                        Login
+                    </button>
+                </form>
             </div>
         </div>
-    )
+    );
 };
 
 export default AdminLogin;
