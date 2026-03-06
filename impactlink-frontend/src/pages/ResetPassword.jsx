@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { m, AnimatePresence } from "framer-motion";
+import { scaleIn, fadeUp, fadeLeft, fadeRight, buttonTap, gpuStyles } from "../utils/animations";
 import api from "../utils/api";
 import { Lock, CheckCircle } from "lucide-react";
+import PageTransition from "../components/PageTransition";
 
 const ResetPassword = () => {
     const { userId, token } = useParams();
@@ -41,74 +44,88 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card" style={{ maxWidth: "440px" }}>
-                {!success ? (
-                    <>
-                        <div className="text-center mb-4">
-                            <div className="bg-primary-subtle text-primary d-inline-flex p-3 rounded-circle mb-3">
-                                <Lock size={32} />
+        <PageTransition className="auth-container">
+            <m.div className="auth-card" style={{ maxWidth: "440px", ...gpuStyles }} variants={scaleIn} initial="hidden" animate="visible">
+                <AnimatePresence mode="wait">
+                    {!success ? (
+                        <m.div key="form" variants={fadeLeft} initial="hidden" animate="visible" exit="hidden" style={gpuStyles}>
+                            <div className="text-center mb-4">
+                                <m.div className="bg-primary-subtle text-primary d-inline-flex p-3 rounded-circle mb-3"
+                                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ delay: 0.15, type: "spring", stiffness: 250, damping: 20 }}
+                                    style={gpuStyles}
+                                >
+                                    <Lock size={32} />
+                                </m.div>
+                                <h3 className="fw-bold mb-2">Set New Password</h3>
+                                <p className="text-muted small">
+                                    Enter your new password below. Make sure it's at least 6 characters.
+                                </p>
                             </div>
-                            <h3 className="fw-bold mb-2">Set New Password</h3>
-                            <p className="text-muted small">
-                                Enter your new password below. Make sure it's at least 6 characters.
+
+                            {error && (
+                                <m.div className="alert alert-danger py-2" variants={fadeUp} initial="hidden" animate="visible" style={gpuStyles}>
+                                    {error}
+                                </m.div>
+                            )}
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-4">
+                                    <label className="label-custom">New Password</label>
+                                    <input
+                                        type="password"
+                                        className="input-custom"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        minLength={6}
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="label-custom">Confirm Password</label>
+                                    <input
+                                        type="password"
+                                        className="input-custom"
+                                        placeholder="••••••••"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        minLength={6}
+                                    />
+                                </div>
+
+                                <m.button type="submit" className="btn-primary-custom w-100 py-3" disabled={loading} {...buttonTap}>
+                                    {loading ? (
+                                        <><div className="spinner-border spinner-border-sm me-2" role="status"></div> Resetting...</>
+                                    ) : (
+                                        "Reset Password"
+                                    )}
+                                </m.button>
+                            </form>
+                        </m.div>
+                    ) : (
+                        <m.div key="success" className="text-center" variants={fadeRight} initial="hidden" animate="visible" exit="hidden" style={gpuStyles}>
+                            <m.div className="bg-success bg-opacity-10 text-success d-inline-flex p-3 rounded-circle mb-3"
+                                initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.1, type: "spring", stiffness: 250, damping: 20 }}
+                                style={gpuStyles}
+                            >
+                                <CheckCircle size={32} />
+                            </m.div>
+                            <h3 className="fw-bold mb-2">Password Reset!</h3>
+                            <p className="text-muted mb-4">
+                                Your password has been changed successfully. Redirecting you to login...
                             </p>
-                        </div>
-
-                        {error && <div className="alert alert-danger py-2">{error}</div>}
-
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label className="label-custom">New Password</label>
-                                <input
-                                    type="password"
-                                    className="input-custom"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    minLength={6}
-                                />
-                            </div>
-
-                            <div className="mb-4">
-                                <label className="label-custom">Confirm Password</label>
-                                <input
-                                    type="password"
-                                    className="input-custom"
-                                    placeholder="••••••••"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                    minLength={6}
-                                />
-                            </div>
-
-                            <button type="submit" className="btn-primary-custom w-100 py-3" disabled={loading}>
-                                {loading ? (
-                                    <><div className="spinner-border spinner-border-sm me-2" role="status"></div> Resetting...</>
-                                ) : (
-                                    "Reset Password"
-                                )}
-                            </button>
-                        </form>
-                    </>
-                ) : (
-                    <div className="text-center">
-                        <div className="bg-success bg-opacity-10 text-success d-inline-flex p-3 rounded-circle mb-3">
-                            <CheckCircle size={32} />
-                        </div>
-                        <h3 className="fw-bold mb-2">Password Reset!</h3>
-                        <p className="text-muted mb-4">
-                            Your password has been changed successfully. Redirecting you to login...
-                        </p>
-                        <Link to="/login" className="btn-primary-custom w-100 py-3 text-center d-block text-decoration-none">
-                            Go to Login
-                        </Link>
-                    </div>
-                )}
-            </div>
-        </div>
+                            <Link to="/login" className="btn-primary-custom w-100 py-3 text-center d-block text-decoration-none">
+                                Go to Login
+                            </Link>
+                        </m.div>
+                    )}
+                </AnimatePresence>
+            </m.div>
+        </PageTransition>
     );
 };
 

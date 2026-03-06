@@ -2,5 +2,5 @@ node_modules
 git.txt
 .env
 walkthrough.md
-changelog.md.resolved
-issues.md.resolved
+changelog.md
+issues.md

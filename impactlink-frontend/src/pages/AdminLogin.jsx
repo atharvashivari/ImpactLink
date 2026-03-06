@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { m } from "framer-motion";
+import { scaleIn, fadeUp, buttonTap, gpuStyles } from "../utils/animations";
 import api from "../utils/api";
+import PageTransition from "../components/PageTransition";
 
 const AdminLogin = () => {
     const navigate = useNavigate();
@@ -51,11 +54,15 @@ const AdminLogin = () => {
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
+        <PageTransition className="auth-container">
+            <m.div className="auth-card" variants={scaleIn} initial="hidden" animate="visible" style={gpuStyles}>
                 <h3 className="text-center fw-bold mb-4">Admin Login</h3>
 
-                {error && <div className="alert alert-danger py-2">{error}</div>}
+                {error && (
+                    <m.div className="alert alert-danger py-2" variants={fadeUp} initial="hidden" animate="visible" style={gpuStyles}>
+                        {error}
+                    </m.div>
+                )}
 
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
@@ -80,12 +87,12 @@ const AdminLogin = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="btn-primary-custom w-100 mt-2">
+                    <m.button type="submit" className="btn-primary-custom w-100 mt-2" {...buttonTap}>
                         Login
-                    </button>
+                    </m.button>
                 </form>
-            </div>
-        </div>
+            </m.div>
+        </PageTransition>
     );
 };
 

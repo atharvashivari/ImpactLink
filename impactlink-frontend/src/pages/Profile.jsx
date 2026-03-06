@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { m } from "framer-motion";
+import { fadeUp, gpuStyles, cardHover, buttonTap } from "../utils/animations";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
 import { User, Mail, Phone, FileText, Camera, Lock, Save } from "lucide-react";
+import PageTransition from "../components/PageTransition";
+import FadeIn from "../components/reactbits/FadeIn";
 
 const Profile = () => {
     const { user, updateUser } = useAuth();
@@ -99,185 +103,214 @@ const Profile = () => {
     }
 
     return (
-        <div className="page-container py-5 mt-2">
+        <PageTransition className="page-container py-5 mt-2">
             <div className="container" style={{ maxWidth: "800px" }}>
-                <div className="mb-5">
+                <m.div
+                    className="mb-5"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                >
                     <h2 className="display-6 fw-bold mb-2">My Profile</h2>
                     <p className="text-muted">Manage your account information and security.</p>
-                </div>
+                </m.div>
 
                 {message.text && (
-                    <div className={`alert alert-${message.type} mb-4`} role="alert">
+                    <m.div
+                        className={`alert alert-${message.type} mb-4`}
+                        role="alert"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
                         {message.text}
-                    </div>
+                    </m.div>
                 )}
 
                 {/* Profile Info Card */}
-                <div className="custom-card p-4 p-md-5 mb-4">
-                    <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
-                        <User size={20} className="text-primary" /> Personal Information
-                    </h5>
+                <FadeIn>
+                    <div className="custom-card p-4 p-md-5 mb-4">
+                        <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
+                            <User size={20} className="text-primary" /> Personal Information
+                        </h5>
 
-                    <form onSubmit={handleSaveProfile}>
-                        {/* Avatar */}
-                        <div className="text-center mb-4">
-                            <div className="position-relative d-inline-block">
-                                <div
-                                    className="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
-                                    style={{ width: "100px", height: "100px", fontSize: "2.5rem", overflow: "hidden" }}
-                                >
-                                    {profile?.avatar ? (
-                                        <img src={profile.avatar} alt="Avatar" className="w-100 h-100 object-fit-cover" />
-                                    ) : (
-                                        profile?.name?.charAt(0)?.toUpperCase() || "U"
-                                    )}
+                        <form onSubmit={handleSaveProfile}>
+                            {/* Avatar */}
+                            <div className="text-center mb-4">
+                                <div className="position-relative d-inline-block">
+                                    <m.div
+                                        className="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style={{ width: "100px", height: "100px", fontSize: "2.5rem", overflow: "hidden" }}
+                                        initial={{ scale: 0.8 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ duration: 0.4, type: "spring" }}
+                                    >
+                                        {profile?.avatar ? (
+                                            <img src={profile.avatar} alt="Avatar" className="w-100 h-100 object-fit-cover" />
+                                        ) : (
+                                            profile?.name?.charAt(0)?.toUpperCase() || "U"
+                                        )}
+                                    </m.div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="row g-3 mb-4">
-                            <div className="col-md-6">
+                            <div className="row g-3 mb-4">
+                                <div className="col-md-6">
+                                    <label className="label-custom">
+                                        <User size={14} className="me-1" /> Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        className="input-custom"
+                                        value={profile?.name || ""}
+                                        onChange={handleProfileChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="label-custom">
+                                        <Mail size={14} className="me-1" /> Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        className="input-custom bg-light"
+                                        value={profile?.email || ""}
+                                        disabled
+                                    />
+                                    <small className="text-muted">Email cannot be changed.</small>
+                                </div>
+                            </div>
+
+                            <div className="row g-3 mb-4">
+                                <div className="col-md-6">
+                                    <label className="label-custom">
+                                        <Phone size={14} className="me-1" /> Phone
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        className="input-custom"
+                                        placeholder="+1 (555) 000-0000"
+                                        value={profile?.phone || ""}
+                                        onChange={handleProfileChange}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="label-custom">
+                                        <Camera size={14} className="me-1" /> Avatar URL
+                                    </label>
+                                    <input
+                                        type="url"
+                                        name="avatar"
+                                        className="input-custom"
+                                        placeholder="https://example.com/photo.jpg"
+                                        value={profile?.avatar || ""}
+                                        onChange={handleProfileChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
                                 <label className="label-custom">
-                                    <User size={14} className="me-1" /> Full Name
+                                    <FileText size={14} className="me-1" /> Bio
                                 </label>
-                                <input
-                                    type="text"
-                                    name="name"
+                                <textarea
+                                    name="bio"
                                     className="input-custom"
-                                    value={profile?.name || ""}
+                                    rows="3"
+                                    placeholder="Tell us about yourself..."
+                                    value={profile?.bio || ""}
                                     onChange={handleProfileChange}
-                                    required
-                                />
+                                    maxLength={500}
+                                ></textarea>
+                                <small className="text-muted">{(profile?.bio || "").length}/500 characters</small>
                             </div>
-                            <div className="col-md-6">
-                                <label className="label-custom">
-                                    <Mail size={14} className="me-1" /> Email
-                                </label>
-                                <input
-                                    type="email"
-                                    className="input-custom bg-light"
-                                    value={profile?.email || ""}
-                                    disabled
-                                />
-                                <small className="text-muted">Email cannot be changed.</small>
-                            </div>
-                        </div>
 
-                        <div className="row g-3 mb-4">
-                            <div className="col-md-6">
-                                <label className="label-custom">
-                                    <Phone size={14} className="me-1" /> Phone
-                                </label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    className="input-custom"
-                                    placeholder="+1 (555) 000-0000"
-                                    value={profile?.phone || ""}
-                                    onChange={handleProfileChange}
-                                />
-                            </div>
-                            <div className="col-md-6">
-                                <label className="label-custom">
-                                    <Camera size={14} className="me-1" /> Avatar URL
-                                </label>
-                                <input
-                                    type="url"
-                                    name="avatar"
-                                    className="input-custom"
-                                    placeholder="https://example.com/photo.jpg"
-                                    value={profile?.avatar || ""}
-                                    onChange={handleProfileChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="label-custom">
-                                <FileText size={14} className="me-1" /> Bio
-                            </label>
-                            <textarea
-                                name="bio"
-                                className="input-custom"
-                                rows="3"
-                                placeholder="Tell us about yourself..."
-                                value={profile?.bio || ""}
-                                onChange={handleProfileChange}
-                                maxLength={500}
-                            ></textarea>
-                            <small className="text-muted">{(profile?.bio || "").length}/500 characters</small>
-                        </div>
-
-                        <button type="submit" className="btn-primary-custom d-flex align-items-center gap-2" disabled={saving}>
-                            {saving ? (
-                                <><div className="spinner-border spinner-border-sm" role="status"></div> Saving...</>
-                            ) : (
-                                <><Save size={18} /> Save Changes</>
-                            )}
-                        </button>
-                    </form>
-                </div>
+                            <m.button
+                                type="submit"
+                                className="btn-primary-custom d-flex align-items-center gap-2"
+                                disabled={saving}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                {saving ? (
+                                    <><div className="spinner-border spinner-border-sm" role="status"></div> Saving...</>
+                                ) : (
+                                    <><Save size={18} /> Save Changes</>
+                                )}
+                            </m.button>
+                        </form>
+                    </div>
+                </FadeIn>
 
                 {/* Change Password Card */}
-                <div className="custom-card p-4 p-md-5">
-                    <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
-                        <Lock size={20} className="text-primary" /> Change Password
-                    </h5>
+                <FadeIn delay={0.15}>
+                    <div className="custom-card p-4 p-md-5">
+                        <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
+                            <Lock size={20} className="text-primary" /> Change Password
+                        </h5>
 
-                    <form onSubmit={handleChangePassword}>
-                        <div className="mb-4">
-                            <label className="label-custom">Current Password</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                className="input-custom"
-                                placeholder="••••••••"
-                                value={passwordData.currentPassword}
-                                onChange={handlePasswordChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="row g-3 mb-4">
-                            <div className="col-md-6">
-                                <label className="label-custom">New Password</label>
+                        <form onSubmit={handleChangePassword}>
+                            <div className="mb-4">
+                                <label className="label-custom">Current Password</label>
                                 <input
                                     type="password"
-                                    name="newPassword"
+                                    name="currentPassword"
                                     className="input-custom"
                                     placeholder="••••••••"
-                                    value={passwordData.newPassword}
+                                    value={passwordData.currentPassword}
                                     onChange={handlePasswordChange}
                                     required
-                                    minLength={6}
                                 />
                             </div>
-                            <div className="col-md-6">
-                                <label className="label-custom">Confirm New Password</label>
-                                <input
-                                    type="password"
-                                    name="confirmPassword"
-                                    className="input-custom"
-                                    placeholder="••••••••"
-                                    value={passwordData.confirmPassword}
-                                    onChange={handlePasswordChange}
-                                    required
-                                    minLength={6}
-                                />
-                            </div>
-                        </div>
 
-                        <button type="submit" className="btn-outline-custom d-flex align-items-center gap-2" disabled={changingPassword}>
-                            {changingPassword ? (
-                                <><div className="spinner-border spinner-border-sm" role="status"></div> Updating...</>
-                            ) : (
-                                <><Lock size={18} /> Update Password</>
-                            )}
-                        </button>
-                    </form>
-                </div>
+                            <div className="row g-3 mb-4">
+                                <div className="col-md-6">
+                                    <label className="label-custom">New Password</label>
+                                    <input
+                                        type="password"
+                                        name="newPassword"
+                                        className="input-custom"
+                                        placeholder="••••••••"
+                                        value={passwordData.newPassword}
+                                        onChange={handlePasswordChange}
+                                        required
+                                        minLength={6}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="label-custom">Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        className="input-custom"
+                                        placeholder="••••••••"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                        required
+                                        minLength={6}
+                                    />
+                                </div>
+                            </div>
+
+                            <m.button
+                                type="submit"
+                                className="btn-outline-custom d-flex align-items-center gap-2"
+                                disabled={changingPassword}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                {changingPassword ? (
+                                    <><div className="spinner-border spinner-border-sm" role="status"></div> Updating...</>
+                                ) : (
+                                    <><Lock size={18} /> Update Password</>
+                                )}
+                            </m.button>
+                        </form>
+                    </div>
+                </FadeIn>
             </div>
-        </div>
+        </PageTransition>
     );
 };
 

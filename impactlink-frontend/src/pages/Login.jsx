@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { m } from "framer-motion";
+import { scaleIn, fadeUp, buttonTap, gpuStyles } from "../utils/animations";
 import api from "../utils/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAuth } from "../context/AuthContext";
+import PageTransition from "../components/PageTransition";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,11 +34,15 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <PageTransition className="auth-container">
+      <m.div className="auth-card" variants={scaleIn} initial="hidden" animate="visible" style={gpuStyles}>
         <h3 className="text-center fw-bold mb-4">User Login</h3>
 
-        {error && <div className="alert alert-danger py-2">{error}</div>}
+        {error && (
+          <m.div className="alert alert-danger py-2" variants={fadeUp} initial="hidden" animate="visible" style={gpuStyles}>
+            {error}
+          </m.div>
+        )}
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
@@ -68,16 +75,22 @@ const Login = () => {
             </a>
           </div>
 
-          <button type="submit" className="btn-primary-custom w-100 mt-2" disabled={loading}>
+          <m.button
+            type="submit"
+            className="btn-primary-custom w-100 mt-2"
+            disabled={loading}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
             {loading ? "Logging in..." : "Login"}
-          </button>
+          </m.button>
         </form>
 
         <p className="text-center text-muted small mt-4 pt-3 border-top">
           Don't have an account? <a href="/signup" className="text-primary fw-medium">Sign Up</a>
         </p>
-      </div>
-    </div>
+      </m.div>
+    </PageTransition>
   );
 };
 

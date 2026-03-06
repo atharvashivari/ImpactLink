@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { m } from "framer-motion";
+import { scaleIn, fadeUp, buttonTap, gpuStyles } from "../utils/animations";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
+import PageTransition from "../components/PageTransition";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -34,11 +37,15 @@ const Signup = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <PageTransition className="auth-container">
+      <m.div className="auth-card" variants={scaleIn} initial="hidden" animate="visible" style={gpuStyles}>
         <h3 className="text-center fw-bold mb-4">Create an Account</h3>
 
-        {error && <div className="alert alert-danger py-2">{error}</div>}
+        {error && (
+          <m.div className="alert alert-danger py-2" variants={fadeUp} initial="hidden" animate="visible" style={gpuStyles}>
+            {error}
+          </m.div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -74,14 +81,21 @@ const Signup = () => {
               required
             />
           </div>
-          <button type="submit" className="btn-primary-custom w-100 mt-2">Sign Up</button>
+          <m.button
+            type="submit"
+            className="btn-primary-custom w-100 mt-2"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Sign Up
+          </m.button>
         </form>
 
         <p className="text-center text-muted small mt-4 pt-3 border-top">
           Already have an account? <a href="/login" className="text-primary fw-medium">Login</a>
         </p>
-      </div>
-    </div>
+      </m.div>
+    </PageTransition>
   );
 };
 

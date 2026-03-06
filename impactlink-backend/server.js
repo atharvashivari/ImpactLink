@@ -74,7 +74,7 @@ app.use("/api/donations", generalLimiter, donationRoutes);
 app.use("/api/payments", generalLimiter, paymentRoutes);
 app.use("/api/contact", generalLimiter, contactRoutes);
 app.use("/api", generalLimiter, dashboardRoutes);
-app.use("/api/admin", authLimiter, adminRoutes);
+app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/admin/dashboard", generalLimiter, admindashRoutes);
 app.use("/api/user", generalLimiter, userRoutes);
 

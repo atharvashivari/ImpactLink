@@ -1,11 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { m } from "framer-motion";
+import { gpuStyles, fadeUp } from "../utils/animations";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Footer() {
   return (
     <footer className="bg-white border-top py-5 mt-auto">
-      <div className="container">
+      <m.div
+        className="container"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <div className="row gy-4">
           {/* Column 1: Brand Info */}
           <div className="col-md-6">
@@ -34,7 +42,7 @@ function Footer() {
         <div className="text-center mt-5 pt-4 border-top">
           <p className="text-muted mb-0 small">© {new Date().getFullYear()} ImpactLink. All rights reserved.</p>
         </div>
-      </div>
+      </m.div>
     </footer>
   );
 }

@@ -26,13 +26,17 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            // Token expired or invalid — auto-logout
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            // Skip auto-logout for admin routes — admin auth is handled separately
+            const isAdminRoute = window.location.pathname.includes("/admin");
+            if (!isAdminRoute) {
+                // Token expired or invalid — auto-logout
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
 
-            // Only redirect if not already on login page
-            if (!window.location.pathname.includes("/login")) {
-                window.location.href = "/login";
+                // Only redirect if not already on login page
+                if (!window.location.pathname.includes("/login")) {
+                    window.location.href = "/login";
+                }
             }
         }
         return Promise.reject(error);

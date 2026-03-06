@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { m } from "framer-motion";
 import api from "../utils/api";
+import { fadeUp, heroStagger, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
 import SplitText from "../components/reactbits/SplitText";
 import CountUp from "../components/reactbits/CountUp";
 import FadeIn from "../components/reactbits/FadeIn";
+import PageTransition from "../components/PageTransition";
 import { Heart, Users, Target, ArrowRight } from "lucide-react";
 
 const Home = () => {
@@ -22,7 +25,7 @@ const Home = () => {
   };
 
   return (
-    <div className="w-100">
+    <PageTransition className="w-100">
       {/* ─── Hero Section ─── */}
       <section className="full-width-section hero-section" style={{ marginTop: "-2rem" }}>
         <img
@@ -32,28 +35,45 @@ const Home = () => {
         />
         <div className="hero-overlay"></div>
 
-        <div className="hero-content">
-          <span className="badge gradient-badge rounded-pill px-3 py-2 mb-4 d-inline-block fs-6">
+        <m.div
+          className="hero-content"
+          variants={heroStagger}
+          initial="hidden"
+          animate="visible"
+          style={gpuStyles}
+        >
+          <m.span
+            className="badge gradient-badge rounded-pill px-3 py-2 mb-4 d-inline-block fs-6"
+            variants={fadeUp}
+            style={gpuStyles}
+          >
             ImpactLink 2026
-          </span>
+          </m.span>
 
-          <h1 className="display-3 fw-bold mb-3">
+          <m.h1 className="display-3 fw-bold mb-3" variants={fadeUp}>
             <SplitText
               text="Empower Change"
               splitBy="word"
-              duration={0.8}
-              stagger={0.15}
-              from={{ opacity: 0, y: 60 }}
+              duration={0.5}
+              stagger={0.12}
+              from={{ opacity: 0, y: 40 }}
             />
-          </h1>
+          </m.h1>
 
-          <p className="lead mx-auto mb-5" style={{ maxWidth: "600px", opacity: 0.85 }}>
+          <m.p
+            className="lead mx-auto mb-5"
+            style={{ maxWidth: "600px", opacity: 0.85, ...gpuStyles }}
+            variants={fadeUp}
+          >
             Join a global community making a difference, one project at a time.
             Support ideas, charities, and innovations that matter.
-          </p>
+          </m.p>
 
-          <div className="d-flex justify-content-center gap-3 flex-wrap">
-            <a
+          <m.div
+            className="d-flex justify-content-center gap-3 flex-wrap"
+            variants={fadeUp}
+          >
+            <m.a
               href="/create-campaign"
               className="px-4 py-3 fs-5 fw-semibold d-inline-flex align-items-center gap-2 text-decoration-none"
               style={{
@@ -62,10 +82,11 @@ const Home = () => {
                 color: "#0f172a",
                 border: "none",
               }}
+              {...buttonTap}
             >
               Start a Campaign <ArrowRight size={20} />
-            </a>
-            <a
+            </m.a>
+            <m.a
               href="/campaigns"
               className="px-4 py-3 fs-5 fw-medium text-decoration-none"
               style={{
@@ -74,58 +95,40 @@ const Home = () => {
                 color: "#ffffff",
                 border: "none",
               }}
+              {...buttonTap}
             >
               Discover
-            </a>
-          </div>
-        </div>
+            </m.a>
+          </m.div>
+        </m.div>
       </section>
 
       {/* ─── Stats Strip ─── */}
       <section className="full-width-section py-5" style={{ background: "var(--bg-secondary)" }}>
         <div className="container">
-          <div className="row g-4">
-            <div className="col-6 col-md-3">
-              <FadeIn delay={0}>
+          <m.div
+            className="row g-4"
+            variants={staggerContainer(0.1)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            {[
+              { end: 500, suffix: "+", label: "Campaigns Funded", dur: 2000 },
+              { end: 12000, suffix: "+", label: "Donors Worldwide", dur: 2200 },
+              { end: 2, prefix: "$", suffix: "M", label: "Total Raised", dur: 2400 },
+              { end: 45, suffix: "+", label: "Countries Reached", dur: 2000 },
+            ].map((stat, i) => (
+              <m.div className="col-6 col-md-3" key={i} variants={fadeUp} style={gpuStyles}>
                 <div className="stat-card">
                   <div className="stat-number">
-                    <CountUp end={500} suffix="+" duration={2000} />
+                    <CountUp end={stat.end} prefix={stat.prefix || ""} suffix={stat.suffix} duration={stat.dur} />
                   </div>
-                  <div className="stat-label">Campaigns Funded</div>
+                  <div className="stat-label">{stat.label}</div>
                 </div>
-              </FadeIn>
-            </div>
-            <div className="col-6 col-md-3">
-              <FadeIn delay={0.1}>
-                <div className="stat-card">
-                  <div className="stat-number">
-                    <CountUp end={12000} prefix="" suffix="+" duration={2200} />
-                  </div>
-                  <div className="stat-label">Donors Worldwide</div>
-                </div>
-              </FadeIn>
-            </div>
-            <div className="col-6 col-md-3">
-              <FadeIn delay={0.2}>
-                <div className="stat-card">
-                  <div className="stat-number">
-                    <CountUp end={2} prefix="$" suffix="M" duration={2400} />
-                  </div>
-                  <div className="stat-label">Total Raised</div>
-                </div>
-              </FadeIn>
-            </div>
-            <div className="col-6 col-md-3">
-              <FadeIn delay={0.3}>
-                <div className="stat-card">
-                  <div className="stat-number">
-                    <CountUp end={45} suffix="+" duration={2000} />
-                  </div>
-                  <div className="stat-label">Countries Reached</div>
-                </div>
-              </FadeIn>
-            </div>
-          </div>
+              </m.div>
+            ))}
+          </m.div>
         </div>
       </section>
 
@@ -133,9 +136,7 @@ const Home = () => {
       <section className="container my-5 py-5">
         <FadeIn>
           <div className="text-center mb-5">
-            <span className="badge gradient-badge rounded-pill px-3 py-2 mb-3 d-inline-block">
-              Featured
-            </span>
+            <span className="badge gradient-badge rounded-pill px-3 py-2 mb-3 d-inline-block">Featured</span>
             <h2 className="fw-bold mb-2">Campaigns Making a Difference</h2>
             <p className="text-muted mx-auto" style={{ maxWidth: "500px" }}>
               Discover projects that are changing lives. Your contribution matters.
@@ -143,55 +144,56 @@ const Home = () => {
           </div>
         </FadeIn>
 
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <m.div
+          className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {campaigns.length > 0 ? (
-            campaigns.slice(0, 3).map((campaign, index) => {
+            campaigns.slice(0, 3).map((campaign) => {
               const raised = Number(campaign.raisedAmount) || 0;
               const goal = Number(campaign.goalAmount) || 1;
               const progress = Math.min((raised / goal) * 100, 100);
 
               return (
-                <div className="col" key={campaign._id}>
-                  <FadeIn delay={index * 0.1}>
-                    <div className="custom-card h-100 border-0 p-3 pt-4">
-                      <div className="position-relative mb-3">
-                        <img
-                          src={campaign.image || "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1470&auto=format&fit=crop"}
-                          className="img-fluid rounded w-100 object-fit-cover"
-                          alt={campaign.title}
-                          style={{ height: "200px", borderRadius: "var(--radius-lg)" }}
-                        />
-                        <span className="position-absolute top-0 end-0 m-2 badge bg-white shadow-sm border px-2 py-1"
-                          style={{ color: "var(--primary-color)", fontWeight: 600, fontSize: "0.7rem" }}>
-                          {campaign.status === "active" ? "Active" : campaign.status}
-                        </span>
-                      </div>
-                      <div className="card-body px-1 py-2 d-flex flex-column">
-                        <h5 className="fw-bold mb-2" style={{ color: "var(--text-dark)" }}>{campaign.title}</h5>
-                        <p className="small mb-3" style={{ color: "var(--text-muted)", lineHeight: 1.5 }}>
-                          {campaign.description?.substring(0, 80)}
-                          {campaign.description?.length > 80 ? "..." : ""}
-                        </p>
-                        <div className="mt-auto">
-                          <div className="d-flex justify-content-between align-items-center mb-1">
-                            <span className="small fw-semibold" style={{ color: "var(--primary-color)" }}>
-                              ₹{raised.toLocaleString()}
-                            </span>
-                            <span className="small" style={{ color: "var(--text-light)" }}>
-                              of ₹{goal.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="progress mb-3" style={{ height: "6px" }}>
-                            <div className="progress-bar" role="progressbar" style={{ width: `${progress}%` }}></div>
-                          </div>
-                          <a href={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center py-2">
-                            View Details
-                          </a>
+                <m.div className="col" key={campaign._id} variants={fadeUp} style={gpuStyles}>
+                  <m.div
+                    className="custom-card h-100 border-0 p-3 pt-4 card-hover-shadow"
+                    {...cardHover}
+                    style={gpuStyles}
+                  >
+                    <div className="position-relative mb-3">
+                      <img
+                        src={campaign.image || "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1470&auto=format&fit=crop"}
+                        className="img-fluid rounded w-100 object-fit-cover"
+                        alt={campaign.title}
+                        style={{ height: "200px", borderRadius: "var(--radius-lg)" }}
+                      />
+                      <span className="position-absolute top-0 end-0 m-2 badge bg-white shadow-sm border px-2 py-1"
+                        style={{ color: "var(--primary-color)", fontWeight: 600, fontSize: "0.7rem" }}>
+                        {campaign.status === "active" ? "Active" : campaign.status}
+                      </span>
+                    </div>
+                    <div className="card-body px-1 py-2 d-flex flex-column">
+                      <h5 className="fw-bold mb-2" style={{ color: "var(--text-dark)" }}>{campaign.title}</h5>
+                      <p className="small mb-3" style={{ color: "var(--text-muted)", lineHeight: 1.5 }}>
+                        {campaign.description?.substring(0, 80)}{campaign.description?.length > 80 ? "..." : ""}
+                      </p>
+                      <div className="mt-auto">
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <span className="small fw-semibold" style={{ color: "var(--primary-color)" }}>₹{raised.toLocaleString()}</span>
+                          <span className="small" style={{ color: "var(--text-light)" }}>of ₹{goal.toLocaleString()}</span>
                         </div>
+                        <div className="progress mb-3" style={{ height: "6px" }}>
+                          <div className="progress-bar" role="progressbar" style={{ width: `${progress}%` }}></div>
+                        </div>
+                        <a href={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center py-2">View Details</a>
                       </div>
                     </div>
-                  </FadeIn>
-                </div>
+                  </m.div>
+                </m.div>
               );
             })
           ) : (
@@ -199,13 +201,13 @@ const Home = () => {
               <p className="text-muted">No featured campaigns available right now.</p>
             </div>
           )}
-        </div>
+        </m.div>
 
         {campaigns.length > 3 && (
           <div className="text-center mt-5">
-            <a href="/campaigns" className="btn-primary-custom px-4 py-3 d-inline-flex align-items-center gap-2">
+            <m.a href="/campaigns" className="btn-primary-custom px-4 py-3 d-inline-flex align-items-center gap-2" {...buttonTap}>
               View All Campaigns <ArrowRight size={18} />
-            </a>
+            </m.a>
           </div>
         )}
       </section>
@@ -220,30 +222,30 @@ const Home = () => {
             </div>
           </FadeIn>
 
-          <div className="row g-4">
+          <m.div
+            className="row g-4"
+            variants={staggerContainer(0.12)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             {[
               { icon: Target, title: "Create", desc: "Set up your campaign in minutes with a clear goal and story." },
               { icon: Users, title: "Share", desc: "Spread the word to your community and watch support grow." },
               { icon: Heart, title: "Impact", desc: "Receive funds and make your vision a reality." },
             ].map((step, i) => (
-              <div className="col-md-4" key={i}>
-                <FadeIn delay={i * 0.15}>
-                  <div className="text-center p-4">
-                    <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-                      style={{
-                        width: "64px", height: "64px",
-                        background: "var(--primary-light)",
-                        color: "var(--primary-color)"
-                      }}>
-                      <step.icon size={28} />
-                    </div>
-                    <h5 className="fw-bold mb-2">{step.title}</h5>
-                    <p className="text-muted small mb-0">{step.desc}</p>
+              <m.div className="col-md-4" key={i} variants={fadeUp} style={gpuStyles}>
+                <m.div className="text-center p-4 card-hover-shadow" {...cardHover} style={gpuStyles}>
+                  <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                    style={{ width: "64px", height: "64px", background: "var(--primary-light)", color: "var(--primary-color)" }}>
+                    <step.icon size={28} />
                   </div>
-                </FadeIn>
-              </div>
+                  <h5 className="fw-bold mb-2">{step.title}</h5>
+                  <p className="text-muted small mb-0">{step.desc}</p>
+                </m.div>
+              </m.div>
             ))}
-          </div>
+          </m.div>
         </div>
       </section>
 
@@ -253,18 +255,14 @@ const Home = () => {
         <div className="container py-4">
           <FadeIn>
             <h2 className="fw-bold mb-3" style={{ color: "white" }}>Ready to Make an Impact?</h2>
-            <p className="lead mb-4" style={{ opacity: 0.85, color: "white" }}>
-              Start your fundraising journey in minutes.
-            </p>
-            <a href="/create-campaign"
-              className="btn btn-light px-5 py-3 fw-semibold rounded-pill fs-5"
-              style={{ color: "var(--primary-color)" }}>
+            <p className="lead mb-4" style={{ opacity: 0.85, color: "white" }}>Start your fundraising journey in minutes.</p>
+            <m.a href="/create-campaign" className="btn btn-light px-5 py-3 fw-semibold rounded-pill fs-5" style={{ color: "var(--primary-color)" }} {...buttonTap}>
               Start Now
-            </a>
+            </m.a>
           </FadeIn>
         </div>
       </section>
-    </div>
+    </PageTransition>
   );
 };
 

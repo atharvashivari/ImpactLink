@@ -1,57 +1,39 @@
-import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
+import React from "react";
+import { m } from "framer-motion";
+import { gpuStyles } from "../../utils/animations";
 
-/**
- * FadeIn — React Bits inspired component
- * Fades and slides children into view when they enter the viewport.
- */
 const FadeIn = ({
     children,
-    direction = "up", // "up", "down", "left", "right"
+    direction = "up",
     delay = 0,
-    duration = 0.8,
+    duration = 0.45,
     className = "",
-    distance = 40,
+    distance = 24,
 }) => {
-    const ref = useRef(null);
+    const directionMap = {
+        up: { y: distance },
+        down: { y: -distance },
+        left: { x: distance },
+        right: { x: -distance },
+    };
 
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-
-        const from = { opacity: 0 };
-        if (direction === "up") from.y = distance;
-        if (direction === "down") from.y = -distance;
-        if (direction === "left") from.x = distance;
-        if (direction === "right") from.x = -distance;
-
-        gsap.set(el, from);
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    gsap.to(el, {
-                        opacity: 1,
-                        x: 0,
-                        y: 0,
-                        duration,
-                        delay,
-                        ease: "power3.out",
-                    });
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, [direction, delay, duration, distance]);
+    const offset = directionMap[direction] || { y: distance };
 
     return (
-        <div ref={ref} className={className}>
+        <m.div
+            className={className}
+            initial={{ opacity: 0, ...offset }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{
+                duration,
+                delay,
+                ease: [0.22, 1, 0.36, 1],
+            }}
+            style={gpuStyles}
+        >
             {children}
-        </div>
+        </m.div>
     );
 };
 

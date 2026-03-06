@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { m } from "framer-motion";
+import { fadeUp, gpuStyles, staggerContainer } from "../utils/animations";
 import { LayoutDashboard, Users, Database, Settings, LogOut, CheckCircle, XCircle, Trash2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import PageTransition from "../components/PageTransition";
 
 const AdminDashboard = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -25,8 +28,8 @@ const AdminDashboard = () => {
 
   const toggleCampaignStatus = async (id, currentStatus) => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/campaigns/${id}`,
+      await axios.put(
+        `http://localhost:5000/api/admin/dashboard/campaigns/${id}/status`,
         { isActive: !currentStatus },
         { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );
@@ -39,7 +42,7 @@ const AdminDashboard = () => {
   const deleteCampaign = async (id) => {
     try {
       if (window.confirm("Are you sure you want to delete this campaign?")) {
-        await axios.delete(`http://localhost:5000/api/campaigns/${id}`, {
+        await axios.delete(`http://localhost:5000/api/admin/dashboard/campaigns/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
         });
         fetchCampaigns();
@@ -72,7 +75,7 @@ const AdminDashboard = () => {
   const COLORS = ["#28a745", "#dc3545"];
 
   return (
-    <div className="container-fluid bg-light min-vh-100 p-0">
+    <PageTransition className="container-fluid bg-light min-vh-100 p-0">
       <div className="row g-0">
 
         {/* Sidebar */}
@@ -125,8 +128,8 @@ const AdminDashboard = () => {
           </div>
 
           {/* Top Charts Row */}
-          <div className="row g-4 mb-4">
-            <div className="col-lg-6">
+          <m.div className="row g-4 mb-4" variants={staggerContainer()} initial="hidden" animate="visible">
+            <m.div className="col-lg-6" variants={fadeUp}>
               <div className="custom-card p-4 h-100">
                 <div className="d-flex justify-content-between mb-3">
                   <div>
@@ -138,16 +141,16 @@ const AdminDashboard = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={donationData}>
                       <XAxis dataKey="name" stroke="#8884d8" fontSize={12} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#8884d8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val / 1000}k`} />
+                      <YAxis stroke="#8884d8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val / 1000}k`} />
                       <Tooltip cursor={{ fill: 'transparent' }} />
                       <Bar dataKey="amount" fill="#2563eb" radius={[4, 4, 0, 0]} barSize={30} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-            </div>
+            </m.div>
 
-            <div className="col-lg-3">
+            <m.div className="col-lg-3" variants={fadeUp}>
               <div className="custom-card p-4 h-100 d-flex flex-column align-items-center justify-content-center text-center">
                 <h6 className="text-muted fw-bold mb-3 w-100 text-start">Campaign Status</h6>
                 <div style={{ width: "160px", height: "160px" }}>
@@ -167,9 +170,9 @@ const AdminDashboard = () => {
                   <small><span className="d-inline-block rounded-circle me-1" style={{ width: 8, height: 8, backgroundColor: COLORS[1] }}></span> Inactive ({activeInactiveData[1].value})</small>
                 </div>
               </div>
-            </div>
+            </m.div>
 
-            <div className="col-lg-3">
+            <m.div className="col-lg-3" variants={fadeUp}>
               <div className="custom-card p-4 h-100">
                 <h6 className="text-muted fw-bold mb-3">User Statistics</h6>
                 <div className="mb-4">
@@ -185,8 +188,8 @@ const AdminDashboard = () => {
                   <h4 className="fw-bold">456</h4>
                 </div>
               </div>
-            </div>
-          </div>
+            </m.div>
+          </m.div>
 
           {/* Table Row */}
           <div className="row">
@@ -205,8 +208,8 @@ const AdminDashboard = () => {
                     </thead>
                     <tbody>
                       {campaigns.length > 0 ? (
-                        campaigns.map((camp) => (
-                          <tr key={camp._id} className="border-bottom border-light">
+                        campaigns.map((camp, idx) => (
+                          <m.tr key={camp._id} className="border-bottom border-light" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: idx * 0.05 }}>
                             <td className="py-3 text-dark fw-medium">{camp.title}</td>
                             <td className="py-3 text-muted">{camp.creator || "Unknown"}</td>
                             <td className="py-3">
@@ -230,7 +233,7 @@ const AdminDashboard = () => {
                                 <Trash2 size={16} />
                               </button>
                             </td>
-                          </tr>
+                          </m.tr>
                         ))
                       ) : (
                         <tr>
@@ -247,7 +250,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 

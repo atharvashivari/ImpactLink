@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Campaign = require("../models/Campaign"); // Ensure the path is correct
-const { verifyToken: authMiddleware } = require("../middleware/auth"); // Ensure authentication middleware is applied
+const Campaign = require("../models/Campaign");
+const Donation = require("../models/Donation");
+const { verifyToken: authMiddleware } = require("../middleware/auth");
 
 router.get("/dashboard", authMiddleware, async (req, res) => {
   try {
@@ -10,8 +11,10 @@ router.get("/dashboard", authMiddleware, async (req, res) => {
     // Fetch user's campaigns from the database
     const myCampaigns = await Campaign.find({ creator: userId });
 
-    // Since there's no Contribution model, return an empty array for contributions
-    const myContributions = [];
+    // Fetch user's donations with campaign details
+    const myContributions = await Donation.find({ donor: userId, paymentStatus: "Completed" })
+      .populate("campaign", "title image")
+      .sort({ date: -1 });
 
     res.json({ myCampaigns, myContributions });
   } catch (error) {

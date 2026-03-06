@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { m, AnimatePresence } from "framer-motion";
+import { gpuStyles, dropdownVariants } from "../utils/animations";
 import { useAuth } from "../context/AuthContext";
 import { User, ChevronDown } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -87,23 +89,32 @@ function Navbar() {
                   <span className="fw-medium">{user?.name?.split(" ")[0] || "Account"}</span>
                   <ChevronDown size={14} />
                 </button>
-                {dropdownOpen && (
-                  <ul className="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 show" style={{ borderRadius: "0.75rem" }}>
-                    <li>
-                      <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Profile</Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Dashboard</Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Settings</Link>
-                    </li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li>
-                      <button className="dropdown-item text-danger py-2" onClick={handleLogout}>Logout</button>
-                    </li>
-                  </ul>
-                )}
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <m.ul
+                      className="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 show"
+                      style={{ borderRadius: "0.75rem" }}
+                      initial={{ opacity: 0, scale: 0.92, y: -5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: -5 }}
+                      transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      <li>
+                        <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Profile</Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Dashboard</Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Settings</Link>
+                      </li>
+                      <li><hr className="dropdown-divider" /></li>
+                      <li>
+                        <button className="dropdown-item text-danger py-2" onClick={handleLogout}>Logout</button>
+                      </li>
+                    </m.ul>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <Link className="btn btn-primary-custom rounded-pill px-4 shadow-sm" to="/login">Login/Signup</Link>
