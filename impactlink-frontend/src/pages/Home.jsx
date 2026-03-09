@@ -116,7 +116,7 @@ const Home = () => {
             {[
               { end: 500, suffix: "+", label: "Campaigns Funded", dur: 2000 },
               { end: 12000, suffix: "+", label: "Donors Worldwide", dur: 2200 },
-              { end: 2, prefix: "$", suffix: "M", label: "Total Raised", dur: 2400 },
+              { end: 2, prefix: "₹", suffix: "M", label: "Total Raised", dur: 2400 },
               { end: 45, suffix: "+", label: "Countries Reached", dur: 2000 },
             ].map((stat, i) => (
               <m.div className="col-6 col-md-3" key={i} variants={fadeUp} style={gpuStyles}>
@@ -251,7 +251,7 @@ const Home = () => {
 
       {/* ─── CTA ─── */}
       <section className="full-width-section text-white text-center py-5"
-        style={{ background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%)" }}>
+        style={{ background: "#047857" }}>
         <div className="container py-4">
           <FadeIn>
             <h2 className="fw-bold mb-3" style={{ color: "white" }}>Ready to Make an Impact?</h2>

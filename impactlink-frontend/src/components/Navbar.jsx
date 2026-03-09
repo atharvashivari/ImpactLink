@@ -13,7 +13,7 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const userRole = localStorage.getItem("userRole") || "user";
+  const userRole = user?.role || "user";
 
   // Logout function
   const handleLogout = () => {
@@ -40,7 +40,7 @@ function Navbar() {
       <div className="container">
         <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" to="/">
           {/* Placeholder for logo icon */}
-          <div className="bg-primary rounded-circle" style={{ width: "24px", height: "24px" }}></div>
+          <div className="rounded-circle" style={{ width: "24px", height: "24px", background: "#047857" }}></div>
           <span className="text-dark">ImpactLink</span>
         </Link>
 
@@ -72,7 +72,7 @@ function Navbar() {
             </li>
             {userRole === "admin" && (
               <li className="nav-item">
-                <Link className="nav-link text-primary fw-medium mx-2" to="/admin-dashboard">Admin Dashboard</Link>
+                <Link className="nav-link fw-medium mx-2" to="/admin/dashboard" style={{ color: "#047857" }}>Admin Dashboard</Link>
               </li>
             )}
           </ul>

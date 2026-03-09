@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-const { verifyToken } = require('./middleware/auth');
 
 const app = express();
 
@@ -77,11 +76,6 @@ app.use("/api", generalLimiter, dashboardRoutes);
 app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/admin/dashboard", generalLimiter, admindashRoutes);
 app.use("/api/user", generalLimiter, userRoutes);
-
-// ─── Protected Example Route ──────────────────────────────────
-app.get("/api/protected", verifyToken, (req, res) => {
-  res.json({ msg: "Protected data" });
-});
 
 // ─── 404 Catch-all ─────────────────────────────────────────────
 app.use("*", (req, res) => {

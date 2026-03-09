@@ -3,10 +3,11 @@ const Donation = require("../models/Donation");
 // Create a donation
 exports.createDonation = async (req, res) => {
   try {
-    const { campaign, donor, amount, paymentStatus } = req.body;
+    const { campaign, amount, paymentStatus } = req.body;
+    const donor = req.user.id; // Always use authenticated user from JWT
 
-    if (!campaign || !donor) {
-      return res.status(400).json({ error: "Campaign ID and Donor ID are required" });
+    if (!campaign) {
+      return res.status(400).json({ error: "Campaign ID is required" });
     }
 
     const newDonation = new Donation({ campaign, donor, amount, paymentStatus });

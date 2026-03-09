@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeUp, gpuStyles, cardHover, buttonTap, slideDown, stepVariants } from "../utils/animations";
+import api from "../utils/api";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ArrowRight, ArrowLeft, Check, Image as ImageIcon } from "lucide-react";
@@ -30,14 +31,12 @@ const CreateCampaign = () => {
     const token = localStorage.getItem("token");
     if (!token) { setError("Authentication required."); setLoading(false); return; }
     try {
-      const response = await fetch("http://localhost:5000/api/campaigns", {
-        method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ title: campaign.title, description: campaign.description, goalAmount: parseFloat(campaign.goal), image: campaign.imageUrl, startDate: campaign.startDate, endDate: campaign.endDate }),
+      const response = await api.post("/campaigns", {
+        title: campaign.title, description: campaign.description, goalAmount: parseFloat(campaign.goal),
+        image: campaign.imageUrl, startDate: campaign.startDate, endDate: campaign.endDate, category: campaign.category,
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to create campaign.");
       toast.success("Campaign created successfully!"); navigate("/campaigns");
-    } catch (err) { setError(err.message); toast.error(err.message); } finally { setLoading(false); }
+    } catch (err) { setError(err.response?.data?.error || err.message); toast.error(err.response?.data?.error || err.message); } finally { setLoading(false); }
   };
 
   return (
@@ -78,7 +77,7 @@ const CreateCampaign = () => {
                   <h4 className="fw-bold mb-4">Let's start with the basics</h4>
                   <div className="mb-4"><label className="label-custom">Campaign Title</label><input type="text" name="title" className="input-custom form-control-lg" placeholder="E.g., Save the local community center" value={campaign.title} onChange={handleChange} required /></div>
                   <div className="mb-4"><label className="label-custom">Category</label><select name="category" className="input-custom form-select form-select-lg text-muted" value={campaign.category} onChange={handleChange} required><option value="">Select a category</option><option value="Technology">Technology</option><option value="Health">Health</option><option value="Education">Education</option><option value="Social Cause">Social Cause</option></select></div>
-                  <div className="mb-4"><label className="label-custom">Funding Goal ($)</label><div className="input-group input-group-lg"><span className="input-group-text bg-white border-end-0 text-muted">$</span><input type="number" name="goal" className="form-control border-start-0 ps-0" style={{ boxShadow: "none", borderColor: "#e5e7eb" }} step="0.01" placeholder="5000" value={campaign.goal} onChange={handleChange} required /></div></div>
+                  <div className="mb-4"><label className="label-custom">Funding Goal (₹)</label><div className="input-group input-group-lg"><span className="input-group-text bg-white border-end-0 text-muted">₹</span><input type="number" name="goal" className="form-control border-start-0 ps-0" style={{ boxShadow: "none", borderColor: "#e5e7eb" }} step="0.01" placeholder="5000" value={campaign.goal} onChange={handleChange} required /></div></div>
                 </m.div>
               )}
               {step === 2 && (

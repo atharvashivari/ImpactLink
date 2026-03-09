@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { m } from "framer-motion";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
+import api from "../utils/api";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { fadeUp, staggerContainer, buttonTap, gpuStyles } from "../utils/animations";
 import PageTransition from "../components/PageTransition";
@@ -19,7 +19,7 @@ const Contact = () => {
     setLoading(true);
     setStatus(null);
     try {
-      const res = await axios.post("http://localhost:5000/api/contact", formData);
+      const res = await api.post("/contact", formData);
       setStatus({ success: true, message: res.data.msg || "Message sent successfully!" });
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
@@ -31,7 +31,7 @@ const Contact = () => {
     <PageTransition className="page-container py-5 mt-2">
       <FadeIn>
         <div className="text-center mb-5">
-          <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-medium">Contact Us</span>
+          <span className="badge rounded-pill px-3 py-2 mb-3 fw-medium" style={{ background: "#D1FAE5", color: "#047857" }}>Contact Us</span>
           <h2 className="display-5 fw-bold mb-3">Get in Touch</h2>
           <p className="text-muted lead mx-auto" style={{ maxWidth: "600px" }}>
             Have questions about starting a campaign or need help with a donation? Our team is here to help.
@@ -43,7 +43,7 @@ const Contact = () => {
         {/* Contact Details */}
         <div className="col-lg-5 order-2 order-lg-1">
           <FadeIn direction="left">
-            <div className="custom-card p-4 p-md-5 h-100 bg-primary text-white border-0">
+            <div className="custom-card p-4 p-md-5 h-100 text-white border-0" style={{ background: "#047857" }}>
               <h3 className="fw-bold mb-4">Contact Information</h3>
               <p className="mb-5 opacity-75">Fill out the form and our team will get back to you within 24 hours.</p>
 

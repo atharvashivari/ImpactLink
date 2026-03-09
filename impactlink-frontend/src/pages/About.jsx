@@ -45,7 +45,7 @@ const About = () => {
                 <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" className="img-fluid rounded-4 shadow-lg" alt="Team collaborating" />
                 <m.div className="position-absolute bottom-0 start-0 translate-middle-x mb-5 ms-3 bg-white p-4 rounded-4 shadow d-none d-md-block" style={{ maxWidth: "200px", ...gpuStyles }}
                   initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-                  <h3 className="fw-bold text-primary mb-0">$50M+</h3>
+                  <h3 className="fw-bold mb-0" style={{ color: "#047857" }}>₹50M+</h3>
                   <p className="text-muted small mb-0">Funds Raised Globally</p>
                 </m.div>
               </div>

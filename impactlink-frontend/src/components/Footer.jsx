@@ -18,7 +18,7 @@ function Footer() {
           {/* Column 1: Brand Info */}
           <div className="col-md-6">
             <h5 className="fw-bold text-dark d-flex align-items-center gap-2">
-              <div className="bg-primary rounded-circle" style={{ width: "20px", height: "20px" }}></div>
+              <div className="rounded-circle" style={{ width: "20px", height: "20px", background: "#047857" }}></div>
               ImpactLink
             </h5>
             <p className="text-muted mt-3 pe-md-5">

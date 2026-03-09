@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     bio: { type: String, default: "", maxlength: 500 },
     phone: { type: String, default: "" },
     avatar: { type: String, default: "" },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     settings: {
       emailNotifications: { type: Boolean, default: true },
       darkMode: { type: Boolean, default: false },

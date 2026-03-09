@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
+import api from "../utils/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 import { fadeUp, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
@@ -15,13 +16,8 @@ const Campaigns = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/campaigns", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) { const d = await response.json(); throw new Error(`Error ${response.status}: ${d.msg || "Failed"}`); }
-        const data = await response.json();
-        setCampaigns(data);
+        const response = await api.get("/campaigns");
+        setCampaigns(response.data);
       } catch (err) { setError(err.message); } finally { setLoading(false); }
     };
     fetchCampaigns();

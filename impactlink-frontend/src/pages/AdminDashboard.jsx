@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { fadeUp, gpuStyles, staggerContainer } from "../utils/animations";
@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/dashboard/campaigns", {
+      const res = await api.get("/admin/dashboard/campaigns", {
         headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
       });
       setCampaigns(res.data);
@@ -28,8 +28,8 @@ const AdminDashboard = () => {
 
   const toggleCampaignStatus = async (id, currentStatus) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/admin/dashboard/campaigns/${id}/status`,
+      await api.put(
+        `/admin/dashboard/campaigns/${id}/status`,
         { isActive: !currentStatus },
         { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
   const deleteCampaign = async (id) => {
     try {
       if (window.confirm("Are you sure you want to delete this campaign?")) {
-        await axios.delete(`http://localhost:5000/api/admin/dashboard/campaigns/${id}`, {
+        await api.delete(`/admin/dashboard/campaigns/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
         });
         fetchCampaigns();
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
     { name: "Inactive", value: campaigns.filter(c => !c.isActive).length },
   ];
 
-  const COLORS = ["#28a745", "#dc3545"];
+  const COLORS = ["#047857", "#dc3545"];
 
   return (
     <PageTransition className="container-fluid bg-light min-vh-100 p-0">
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
 
             <ul className="nav flex-column mb-auto">
               <li className="nav-item mb-2">
-                <Link to="/admin/admindashboard" className="nav-link active rounded d-flex align-items-center gap-2" style={{ backgroundColor: "#EFF6FF", color: "#2563EB" }}>
+                <Link to="/admin/admindashboard" className="nav-link active rounded d-flex align-items-center gap-2" style={{ backgroundColor: "#D1FAE5", color: "#047857" }}>
                   <LayoutDashboard size={20} />
                   <span className="d-none d-md-inline">Dashboard</span>
                 </Link>
@@ -134,16 +134,16 @@ const AdminDashboard = () => {
                 <div className="d-flex justify-content-between mb-3">
                   <div>
                     <h6 className="text-muted fw-bold mb-1">Total Donations</h6>
-                    <h3 className="fw-bold mb-0">$255,980</h3>
+                    <h3 className="fw-bold mb-0">₹255,980</h3>
                   </div>
                 </div>
                 <div style={{ height: "200px" }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={donationData}>
-                      <XAxis dataKey="name" stroke="#8884d8" fontSize={12} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#8884d8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val / 1000}k`} />
+                      <XAxis dataKey="name" stroke="#047857" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#047857" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val / 1000}k`} />
                       <Tooltip cursor={{ fill: 'transparent' }} />
-                      <Bar dataKey="amount" fill="#2563eb" radius={[4, 4, 0, 0]} barSize={30} />
+                      <Bar dataKey="amount" fill="#047857" radius={[4, 4, 0, 0]} barSize={30} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

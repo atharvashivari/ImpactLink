@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { m } from "framer-motion";
 import { fadeUp, fadeRight, heroStagger, scaleIn, buttonTap, gpuStyles } from "../utils/animations";
+import api from "../utils/api";
 import PageTransition from "../components/PageTransition";
 import FadeIn from "../components/reactbits/FadeIn";
 
@@ -14,12 +15,8 @@ const CampaignDetails = () => {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/campaigns/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to fetch campaign");
-        setCampaign(data);
+        const response = await api.get(`/campaigns/${id}`);
+        setCampaign(response.data);
       } catch (err) { setError(err.message); } finally { setLoading(false); }
     };
     fetchCampaign();

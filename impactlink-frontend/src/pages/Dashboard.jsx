@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { fadeUp, gpuStyles, staggerContainer } from "../utils/animations";
-import { LayoutDashboard, User, List, Settings, LogOut } from "lucide-react";
+import api from "../utils/api";
+import { LayoutDashboard, User, List, Settings, LogOut, Edit2, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 import PageTransition from "../components/PageTransition";
 
 const Dashboard = () => {
@@ -21,14 +23,8 @@ const Dashboard = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5000/api/dashboard", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch data.");
-
-        const data = await response.json();
+        const response = await api.get("/dashboard");
+        const data = response.data;
         setMyCampaigns(Array.isArray(data.myCampaigns) ? data.myCampaigns : []);
         setMyContributions(Array.isArray(data.myContributions) ? data.myContributions : []);
       } catch (error) {
@@ -41,6 +37,17 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, [navigate]);
+
+  const handleDeleteCampaign = async (campId) => {
+    if (!window.confirm("Are you sure you want to delete this campaign? This cannot be undone.")) return;
+    try {
+      await api.delete(`/campaigns/${campId}`);
+      setMyCampaigns(prev => prev.filter(c => c._id !== campId));
+      toast.success("Campaign deleted successfully.");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to delete campaign.");
+    }
+  };
 
   if (loading) return <div className="d-flex justify-content-center align-items-center vh-100"><div className="spinner-border text-primary"></div></div>;
 
@@ -59,7 +66,7 @@ const Dashboard = () => {
 
             <ul className="nav flex-column mb-auto">
               <li className="nav-item mb-2">
-                <Link to="/dashboard" className="nav-link active rounded d-flex align-items-center gap-2" style={{ backgroundColor: "#EFF6FF", color: "#2563EB" }}>
+                <Link to="/dashboard" className="nav-link active rounded d-flex align-items-center gap-2" style={{ backgroundColor: "#D1FAE5", color: "#047857" }}>
                   <LayoutDashboard size={20} />
                   <span className="d-none d-md-inline">Dashboard</span>
                 </Link>
@@ -161,6 +168,7 @@ const Dashboard = () => {
                           <th className="text-muted fw-medium pb-3">Raised</th>
                           <th className="text-muted fw-medium pb-3">Goal</th>
                           <th className="text-muted fw-medium pb-3">Status</th>
+                          <th className="text-muted fw-medium pb-3 text-end">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -181,6 +189,14 @@ const Dashboard = () => {
                               <span className={`badge rounded-pill ${camp.status === 'Completed' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary'}`}>
                                 {camp.status || 'Active'}
                               </span>
+                            </td>
+                            <td className="py-3 text-end">
+                              <Link to={`/edit-campaign/${camp._id}`} className="btn btn-sm btn-outline-custom me-2" title="Edit">
+                                <Edit2 size={15} />
+                              </Link>
+                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteCampaign(camp._id)}>
+                                <Trash2 size={15} />
+                              </button>
                             </td>
                           </m.tr>
                         ))}

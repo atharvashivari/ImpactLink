@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { m } from "framer-motion";
 import { Heart } from "lucide-react";
 import { fadeUp, scaleIn, buttonTap, gpuStyles } from "../utils/animations";
+import api from "../utils/api";
 import PageTransition from "../components/PageTransition";
 import FadeIn from "../components/reactbits/FadeIn";
 
@@ -21,12 +22,8 @@ const Donations = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) { setMessage("You need to log in to make a donation."); setLoading(false); return; }
-      const response = await fetch(`http://localhost:5000/api/campaigns/${campaignId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to load campaign details.");
-      setCampaign(await response.json());
+      const response = await api.get(`/campaigns/${campaignId}`);
+      setCampaign(response.data);
     } catch (error) { setMessage(error.message); } finally { setLoading(false); }
   };
 
@@ -36,13 +33,8 @@ const Donations = () => {
     setMessage("");
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/payments/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount: Number(amount), currency: "INR" }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Payment initialization failed.");
+      const response = await api.post("/payments/create-order", { amount: Number(amount), currency: "INR" });
+      const data = response.data;
 
       // Open Razorpay checkout with UPI support
       const options = {
@@ -55,19 +47,15 @@ const Donations = () => {
         handler: async function (razorpayResponse) {
           // Verify payment on backend and record donation
           try {
-            const verifyRes = await fetch("http://localhost:5000/api/payments/verify", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-              body: JSON.stringify({
-                razorpay_order_id: razorpayResponse.razorpay_order_id,
-                razorpay_payment_id: razorpayResponse.razorpay_payment_id,
-                razorpay_signature: razorpayResponse.razorpay_signature,
-                campaignId,
-                amount: Number(amount),
-              }),
+            const verifyRes = await api.post("/payments/verify", {
+              razorpay_order_id: razorpayResponse.razorpay_order_id,
+              razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+              razorpay_signature: razorpayResponse.razorpay_signature,
+              campaignId,
+              amount: Number(amount),
             });
-            const verifyData = await verifyRes.json();
-            if (verifyRes.ok) {
+            const verifyData = verifyRes.data;
+            if (verifyData) {
               setMessageType("success");
               setMessage("Payment successful! Thank you for your generous donation. 🎉");
               // Refresh campaign data to show updated raisedAmount
@@ -89,7 +77,7 @@ const Donations = () => {
           netbanking: true,
           wallet: true,
         },
-        theme: { color: "#4f46e5" },
+        theme: { color: "#047857" },
       };
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", function (response) {
