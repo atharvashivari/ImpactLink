@@ -1,4 +1,0 @@
-Git commandds to push changes to repository
-git add .
-git commit -m "type message here"
-git push origin main

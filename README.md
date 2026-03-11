@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![ImpactLink Banner](https://img.shields.io/badge/ImpactLink-Crowdfunding%20Platform-05CE78?style=for-the-badge&logo=data:image/svg+xml;base64,)
-
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=nodedotjs)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
