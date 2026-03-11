@@ -160,8 +160,19 @@ const Donations = () => {
                   <span className="fw-bold text-dark">ImpactLink Promise:</span> 100% of your donation reaches the campaign creator securely via Razorpay. UPI, cards, netbanking and wallets accepted.
                 </div>
 
-                <m.button className="btn-primary-custom w-100 py-3 d-flex align-items-center justify-content-center gap-2" onClick={handlePayment} disabled={processing || !campaign} {...buttonTap}>
-                  {processing ? <><div className="spinner-border spinner-border-sm" role="status"></div> Processing...</> : <span className="fw-bold fs-6">Donate ₹{amount || "0"}</span>}
+                {campaign && campaign.status !== "active" && (
+                  <div className="alert alert-warning text-center border-warning border-opacity-25" role="alert">
+                    <strong>Notice:</strong> This campaign is currently inactive or completed. It is unfortunately no longer accepting donations.
+                  </div>
+                )}
+
+                <m.button 
+                  className={`btn-primary-custom w-100 py-3 d-flex align-items-center justify-content-center gap-2 ${campaign?.status !== "active" ? "disabled opacity-50 pe-none" : ""}`} 
+                  onClick={handlePayment} 
+                  disabled={processing || !campaign || campaign.status !== "active"} 
+                  {...buttonTap}
+                >
+                  {processing ? <><div className="spinner-border spinner-border-sm" role="status"></div> Processing...</> : <span className="fw-bold fs-6">{campaign?.status !== "active" ? "Donations Closed" : `Donate ₹${amount || "0"}`}</span>}
                 </m.button>
 
                 <div className="text-center mt-4 text-muted small">

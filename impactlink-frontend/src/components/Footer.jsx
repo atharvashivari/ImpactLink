@@ -40,7 +40,9 @@ function Footer() {
 
         {/* Copyright Row */}
         <div className="text-center mt-5 pt-4 border-top">
-          <p className="text-muted mb-0 small">© {new Date().getFullYear()} ImpactLink. All rights reserved.</p>
+          <p className="text-muted mb-0 small">
+            © <Link to="/admin/login" className="text-muted text-decoration-none" style={{ cursor: "text" }}>{new Date().getFullYear()}</Link> ImpactLink. All rights reserved.
+          </p>
         </div>
       </m.div>
     </footer>

@@ -8,7 +8,7 @@ const CampaignSchema = new mongoose.Schema(
     raisedAmount: { type: Number, default: 0 },
     creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     backers: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, amount: Number }],
-    status: { type: String, enum: ["active", "completed", "cancelled"], default: "active" },
+    status: { type: String, enum: ["active", "completed", "cancelled", "expired"], default: "active" },
     category: { type: String, default: "" },
     image: { type: String, required: true }, // Storing the image URL
     startDate: { type: Date, required: true }, // Add startDate

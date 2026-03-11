@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { fadeUp, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
 import FadeIn from "../components/reactbits/FadeIn";
@@ -88,8 +89,8 @@ const About = () => {
           <h2 className="fw-bold mb-4">Ready to make a difference?</h2>
           <p className="lead text-muted mb-5 mx-auto" style={{ maxWidth: "600px" }}>Join thousands of creators and backers who are changing the world every day.</p>
           <div className="d-flex justify-content-center gap-3">
-            <m.a href="/create-campaign" className="btn-primary-custom px-4 py-2 fs-5" {...buttonTap}>Start a Campaign</m.a>
-            <m.a href="/campaigns" className="btn-outline-custom px-4 py-2 fs-5" {...buttonTap}>Explore Projects</m.a>
+            <Link to="/create-campaign" className="btn-primary-custom px-4 py-2 fs-5">Start a Campaign</Link>
+            <Link to="/campaigns" className="btn-outline-custom px-4 py-2 fs-5">Explore Projects</Link>
           </div>
         </FadeIn>
       </section>

@@ -118,22 +118,43 @@ a:hover {
   margin-right: -50vw;
 }
 
-/* ========= CARDS ========= */
+/* ========= CARDS (GPU-Safe 60fps) ========= */
 .custom-card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  position: relative;
+  /* GPU-safe: only animate transform & opacity */
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Shadow via ::after pseudo-element to avoid Paint on hover */
+.custom-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .custom-card:hover {
-  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
 
-/* ========= BUTTONS ========= */
+.custom-card:hover::after {
+  opacity: 1;
+}
+
+/* ========= BUTTONS (GPU-Safe 60fps) ========= */
 .btn-primary-custom {
   background: var(--primary-color);
   color: white;
@@ -143,14 +164,18 @@ a:hover {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(4, 120, 87, 0.2);
+  /* GPU-safe transitions only */
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.2s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .btn-primary-custom:hover {
   background: var(--primary-hover);
   color: white;
-  box-shadow: 0 4px 16px rgba(4, 120, 87, 0.3);
   transform: translateY(-1px);
 }
 
@@ -163,16 +188,22 @@ a:hover {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* GPU-safe transitions only */
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.2s ease,
+              color 0.2s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .btn-outline-custom:hover {
   background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.2);
+  transform: translateY(-1px);
 }
 
-/* ========= INPUTS ========= */
+/* ========= INPUTS (minimal transitions) ========= */
 .input-custom {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -181,7 +212,8 @@ a:hover {
   background-color: var(--card-bg);
   color: var(--text-dark);
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
 .input-custom:focus {
@@ -287,18 +319,38 @@ a:hover {
   border: none;
 }
 
-/* ========= STAT CARDS ========= */
+/* ========= STAT CARDS (GPU-Safe) ========= */
 .stat-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   padding: 1.5rem;
   text-align: center;
-  transition: all 0.3s ease;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .stat-card:hover {
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-card:hover::after {
+  opacity: 1;
 }
 
 .stat-number {
@@ -315,7 +367,7 @@ a:hover {
   font-weight: 500;
 }
 
-/* ========= PROGRESS BAR ========= */
+/* ========= PROGRESS BAR (GPU-Safe: uses scaleX) ========= */
 .progress {
   background-color: var(--bg-secondary);
   border-radius: 999px;
@@ -325,7 +377,9 @@ a:hover {
 .progress-bar {
   background: var(--primary-color);
   border-radius: 999px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  /* GPU-safe: use transform instead of width */
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 /* ========= BOOTSTRAP OVERRIDES ========= */
@@ -381,5 +435,17 @@ a:hover {
 
   .page-container {
     padding: 1rem;
+  }
+}
+
+/* ========= REDUCED MOTION ========= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

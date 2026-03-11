@@ -8,11 +8,14 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/AdminUsers";
+import AdminDonations from "./pages/AdminDonations";
 import AdminLogin from "./pages/AdminLogin";
 import CreateCampaign from "./pages/CreateCampaign";
 import EditCampaign from "./pages/EditCampaign";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetails from "./pages/CampaignDetails";
+import CampaignDonations from "./pages/CampaignDonations";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -49,6 +52,7 @@ function AnimatedRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create-campaign" element={<CreateCampaign />} />
           <Route path="/edit-campaign/:id" element={<EditCampaign />} />
+          <Route path="/campaign/:id/donations" element={<CampaignDonations />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
@@ -62,6 +66,8 @@ function AnimatedRoutes() {
         <Route element={<AdminRoute />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/admindashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/donations" element={<AdminDonations />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

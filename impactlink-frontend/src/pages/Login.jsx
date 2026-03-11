@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { scaleIn, fadeUp, buttonTap, gpuStyles } from "../utils/animations";
 import api from "../utils/api";
@@ -70,9 +70,9 @@ const Login = () => {
           </div>
 
           <div className="text-end mb-3">
-            <a href="/forgot-password" className="text-primary small fw-medium text-decoration-none">
+            <Link to="/forgot-password" className="text-primary small fw-medium text-decoration-none">
               Forgot Password?
-            </a>
+            </Link>
           </div>
 
           <m.button
@@ -87,7 +87,7 @@ const Login = () => {
         </form>
 
         <p className="text-center text-muted small mt-4 pt-3 border-top">
-          Don't have an account? <a href="/signup" className="text-primary fw-medium">Sign Up</a>
+          Don't have an account? <Link to="/signup" className="text-primary fw-medium">Sign Up</Link>
         </p>
       </m.div>
     </PageTransition>

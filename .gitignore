@@ -1,9 +1,16 @@
 node_modules
-git.txt
 .env
 walkthrough.md
 changelog.md
 issues.md
-.gitignore
-toto.md
+todo.md
 audit.md
+git.txt
+
+# Redis
+redis/
+*.zip
+
+# Logs
+*.log
+impactlink-backend/crash.log

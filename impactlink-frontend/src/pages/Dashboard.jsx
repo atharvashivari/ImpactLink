@@ -190,7 +190,10 @@ const Dashboard = () => {
                                 {camp.status || 'Active'}
                               </span>
                             </td>
-                            <td className="py-3 text-end">
+                            <td className="py-3 text-end text-nowrap">
+                              <Link to={`/campaign/${camp._id}/donations`} className="btn btn-sm btn-outline-primary me-2" title="View Donations">
+                                <List size={15} />
+                              </Link>
                               <Link to={`/edit-campaign/${camp._id}`} className="btn btn-sm btn-outline-custom me-2" title="Edit">
                                 <Edit2 size={15} />
                               </Link>
@@ -205,8 +208,13 @@ const Dashboard = () => {
                   </div>
                 ) : (
                   <div className="text-center py-5">
-                    <p className="text-muted mb-3">You haven't created any campaigns yet.</p>
-                    <Link to="/create-campaign" className="btn-outline-custom">Create your first campaign</Link>
+                    <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                      style={{ width: "64px", height: "64px", background: "var(--primary-light)", color: "var(--primary-color)" }}>
+                      <List size={28} />
+                    </div>
+                    <h6 className="fw-bold mb-2">No campaigns yet</h6>
+                    <p className="text-muted small mb-3">Create your first campaign and start making an impact!</p>
+                    <Link to="/create-campaign" className="btn-primary-custom px-4 py-2">Create your first campaign</Link>
                   </div>
                 )}
               </m.div>

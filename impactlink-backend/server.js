@@ -1,17 +1,38 @@
 const path = require('path');
 require("dotenv").config({ path: path.resolve(__dirname, '.env') });
+require('./config/validateEnv')();
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
+const morgan = require("morgan");
+const logger = require("./utils/logger");
+const errorHandler = require("./middleware/errorMiddleware");
+const Sentry = require("@sentry/node");
 
 const app = express();
+
+// ─── Sentry Error Tracking Setup (Phase 4) ─────────────────────
+// Wrapped in try-catch to prevent startup crashes if misconfigured locally
+try {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1.0, 
+  });
+  logger.info('👁️ Sentry Error Tracking initialized (v10)');
+} catch (err) {
+  logger.warn('⚠️ Sentry initialization failed or skipped.');
+}
 
 // ─── Security Middleware ───────────────────────────────────────
 app.use(helmet()); // Sets various HTTP security headers
 app.use(mongoSanitize()); // Prevents NoSQL injection attacks
+
+// ─── HTTP Request Logging (Morgan → Winston) ──────────────────
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
 // CORS — allow multiple possible frontend origins
 const allowedOrigins = [
@@ -79,18 +100,57 @@ app.use("/api/user", generalLimiter, userRoutes);
 
 // ─── 404 Catch-all ─────────────────────────────────────────────
 app.use("*", (req, res) => {
-  console.log(`404 Not Found: ${req.originalUrl}`);
+  logger.warn(`404 Not Found: ${req.originalUrl}`);
   res.status(404).json({ error: "Not Found" });
 });
 
-// ─── MongoDB Connection ────────────────────────────────────────
+// The Sentry error handler must be before any other error middleware
+try {
+  Sentry.setupExpressErrorHandler(app);
+} catch (err) {
+  logger.warn('⚠️ Sentry Express Error Handler skipped.');
+}
+
+// ─── Global Error Handler (MUST be after all routes) ───────────
+app.use(errorHandler);
+
+// ─── MongoDB Connection & Server Start ─────────────────────────
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log(`✅ Connected to MongoDB`);
-    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+    logger.info('✅ Connected to MongoDB');
+
+    // Initialize Redis connection (graceful — no-op if REDIS_URL not set)
+    require('./config/redis');
+
+    // Load cron jobs after DB is ready
+    require('./jobs/campaignScheduler');
+
+    // Start email worker (graceful — no-op if Redis unavailable)
+    const { startEmailWorker } = require('./workers/emailWorker');
+    startEmailWorker();
+
+    const server = app.listen(PORT, () => logger.info(`🚀 Server running on http://localhost:${PORT}`));
+
+    // ─── Graceful Shutdown ───────────────────────────────────
+    const gracefulShutdown = (signal) => {
+      logger.info(`🔄 Received ${signal}, shutting down gracefully...`);
+      server.close(() => {
+        logger.info('🛑 HTTP server closed.');
+        mongoose.connection.close(false).then(() => {
+          logger.info('📉 MongoDB connection closed.');
+          process.exit(0);
+        });
+      });
+    };
+
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
   })
-  .catch((err) => console.log(`❌ Error connecting to MongoDB: ${err}`));
+  .catch((err) => {
+    logger.error(`❌ Error connecting to MongoDB: ${err.message}`, { stack: err.stack });
+    process.exit(1);
+  });

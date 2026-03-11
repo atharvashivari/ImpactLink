@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 import { fadeUp, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
 import PageTransition from "../components/PageTransition";
 import FadeIn from "../components/reactbits/FadeIn";
+import { Search } from "lucide-react";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -25,9 +27,23 @@ const Campaigns = () => {
 
   const getSortedCampaigns = () => {
     let sorted = [...campaigns];
-    if (filter === "trending") sorted.sort((a, b) => (Number(b.raisedAmount) || 0) - (Number(a.raisedAmount) || 0));
-    else if (filter === "new") sorted.sort((a, b) => new Date(b.startDate || b.createdAt || Date.now()) - new Date(a.startDate || a.createdAt || Date.now()));
-    else if (filter === "highest") sorted.sort((a, b) => (Number(b.goalAmount) || 0) - (Number(a.goalAmount) || 0));
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      sorted = sorted.filter(c =>
+        c.title?.toLowerCase().includes(q) ||
+        c.description?.toLowerCase().includes(q)
+      );
+    }
+
+    if (filter === "trending") {
+      sorted.sort((a, b) => (Number(b.raisedAmount) || 0) - (Number(a.raisedAmount) || 0));
+    } else if (filter === "new") {
+      sorted.sort((a, b) => new Date(b.startDate || b.createdAt || Date.now()) - new Date(a.startDate || a.createdAt || Date.now()));
+    } else if (filter === "highest") {
+      sorted.sort((a, b) => (Number(b.goalAmount) || 0) - (Number(a.goalAmount) || 0));
+    }
     return sorted;
   };
 
@@ -41,6 +57,20 @@ const Campaigns = () => {
           </p>
         </div>
       </FadeIn>
+
+      {/* Search Bar */}
+      <div className="d-flex justify-content-center mb-4">
+        <div className="position-relative" style={{ maxWidth: "500px", width: "100%" }}>
+          <Search size={18} className="position-absolute top-50 translate-middle-y" style={{ left: "14px", color: "var(--text-muted)" }} />
+          <input
+            type="text"
+            className="input-custom ps-5"
+            placeholder="Search campaigns by name or keyword..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
 
       {/* Filter Buttons */}
       <m.div className="d-flex justify-content-center flex-wrap gap-2 mb-5" variants={staggerContainer(0.06)} initial="hidden" animate="visible">
@@ -99,7 +129,7 @@ const Campaigns = () => {
                     </div>
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <span className="text-muted small">{Math.round(progress)}% of ₹{goal.toLocaleString()}</span>
-                      <span className="text-muted small">{campaign.status || "Active"}</span>
+                      <span className="text-muted small">{campaign.status ? campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) : "Active"}</span>
                     </div>
                     <Link to={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center mt-2">View Details</Link>
                   </div>

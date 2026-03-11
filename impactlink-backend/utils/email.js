@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const logger = require("./logger");
 
 /**
  * Create a reusable transporter.
@@ -20,7 +21,7 @@ async function getTransporter() {
         pass: process.env.SMTP_PASS,
       },
     });
-    console.log("📧 Using configured SMTP server");
+    logger.info("📧 Using configured SMTP server");
     return transporter;
   }
 
@@ -36,10 +37,10 @@ async function getTransporter() {
         pass: testAccount.pass,
       },
     });
-    console.log("📧 Using Ethereal test email:", testAccount.user);
+    logger.info(`📧 Using Ethereal test email: ${testAccount.user}`);
     return transporter;
   } catch (err) {
-    console.warn("⚠️ Ethereal unavailable, using console-only mode:", err.message);
+    logger.warn(`⚠️ Ethereal unavailable, using console-only mode: ${err.message}`);
     return null; // Will use console fallback
   }
 }
@@ -83,12 +84,7 @@ async function sendPasswordResetEmail(toEmail, resetUrl, userName) {
 
   // If no transporter (Ethereal failed, no SMTP), just log to console
   if (!mailer) {
-    console.log("\n" + "=".repeat(60));
-    console.log("📧 PASSWORD RESET EMAIL (Console Fallback)");
-    console.log("=".repeat(60));
-    console.log(`To: ${toEmail}`);
-    console.log(`Reset URL: ${resetUrl}`);
-    console.log("=".repeat(60) + "\n");
+    logger.info(`📧 PASSWORD RESET EMAIL (Console Fallback) — To: ${toEmail} | URL: ${resetUrl}`);
     return { messageId: "console-fallback", previewUrl: resetUrl };
   }
 
@@ -103,7 +99,7 @@ async function sendPasswordResetEmail(toEmail, resetUrl, userName) {
 
   const previewUrl = nodemailer.getTestMessageUrl(info);
   if (previewUrl) {
-    console.log("📧 Preview reset email at:", previewUrl);
+    logger.info(`📧 Preview reset email at: ${previewUrl}`);
   }
 
   return { messageId: info.messageId, previewUrl };

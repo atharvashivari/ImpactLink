@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import api from "../utils/api";
 import { fadeUp, heroStagger, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
@@ -73,8 +74,8 @@ const Home = () => {
             className="d-flex justify-content-center gap-3 flex-wrap"
             variants={fadeUp}
           >
-            <m.a
-              href="/create-campaign"
+            <Link
+              to="/create-campaign"
               className="px-4 py-3 fs-5 fw-semibold d-inline-flex align-items-center gap-2 text-decoration-none"
               style={{
                 borderRadius: "var(--radius-lg)",
@@ -82,12 +83,11 @@ const Home = () => {
                 color: "#0f172a",
                 border: "none",
               }}
-              {...buttonTap}
             >
               Start a Campaign <ArrowRight size={20} />
-            </m.a>
-            <m.a
-              href="/campaigns"
+            </Link>
+            <Link
+              to="/campaigns"
               className="px-4 py-3 fs-5 fw-medium text-decoration-none"
               style={{
                 borderRadius: "var(--radius-lg)",
@@ -95,10 +95,9 @@ const Home = () => {
                 color: "#ffffff",
                 border: "none",
               }}
-              {...buttonTap}
             >
               Discover
-            </m.a>
+            </Link>
           </m.div>
         </m.div>
       </section>
@@ -173,7 +172,7 @@ const Home = () => {
                       />
                       <span className="position-absolute top-0 end-0 m-2 badge bg-white shadow-sm border px-2 py-1"
                         style={{ color: "var(--primary-color)", fontWeight: 600, fontSize: "0.7rem" }}>
-                        {campaign.status === "active" ? "Active" : campaign.status}
+                        {campaign.status ? campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) : "Active"}
                       </span>
                     </div>
                     <div className="card-body px-1 py-2 d-flex flex-column">
@@ -189,7 +188,7 @@ const Home = () => {
                         <div className="progress mb-3" style={{ height: "6px" }}>
                           <div className="progress-bar" role="progressbar" style={{ width: `${progress}%` }}></div>
                         </div>
-                        <a href={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center py-2">View Details</a>
+                        <Link to={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center py-2">View Details</Link>
                       </div>
                     </div>
                   </m.div>
@@ -205,9 +204,9 @@ const Home = () => {
 
         {campaigns.length > 3 && (
           <div className="text-center mt-5">
-            <m.a href="/campaigns" className="btn-primary-custom px-4 py-3 d-inline-flex align-items-center gap-2" {...buttonTap}>
+            <Link to="/campaigns" className="btn-primary-custom px-4 py-3 d-inline-flex align-items-center gap-2">
               View All Campaigns <ArrowRight size={18} />
-            </m.a>
+            </Link>
           </div>
         )}
       </section>
@@ -256,9 +255,9 @@ const Home = () => {
           <FadeIn>
             <h2 className="fw-bold mb-3" style={{ color: "white" }}>Ready to Make an Impact?</h2>
             <p className="lead mb-4" style={{ opacity: 0.85, color: "white" }}>Start your fundraising journey in minutes.</p>
-            <m.a href="/create-campaign" className="btn btn-light px-5 py-3 fw-semibold rounded-pill fs-5" style={{ color: "var(--primary-color)" }} {...buttonTap}>
+            <Link to="/create-campaign" className="btn btn-light px-5 py-3 fw-semibold rounded-pill fs-5" style={{ color: "var(--primary-color)" }}>
               Start Now
-            </m.a>
+            </Link>
           </FadeIn>
         </div>
       </section>

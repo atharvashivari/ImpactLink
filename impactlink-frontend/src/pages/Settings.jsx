@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 import { fadeUp, gpuStyles, cardHover, buttonTap, scaleIn, slideDown } from "../utils/animations";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
-import { Bell, Moon, Trash2, Shield, AlertTriangle } from "lucide-react";
+import { Bell, Trash2, Shield, AlertTriangle } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import FadeIn from "../components/reactbits/FadeIn";
 
@@ -13,7 +13,6 @@ const Settings = () => {
     const navigate = useNavigate();
     const [settings, setSettings] = useState({
         emailNotifications: true,
-        darkMode: false,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -116,7 +115,7 @@ const Settings = () => {
                             <Bell size={20} className="text-primary" /> Notifications
                         </h5>
 
-                        <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                        <div className="d-flex justify-content-between align-items-center py-3">
                             <div>
                                 <h6 className="fw-bold mb-1">Email Notifications</h6>
                                 <p className="text-muted small mb-0">
@@ -130,25 +129,6 @@ const Settings = () => {
                                     role="switch"
                                     checked={settings.emailNotifications}
                                     onChange={() => handleToggle("emailNotifications")}
-                                    style={{ width: "3em", height: "1.5em", cursor: "pointer" }}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="d-flex justify-content-between align-items-center py-3">
-                            <div>
-                                <h6 className="fw-bold mb-1">Dark Mode</h6>
-                                <p className="text-muted small mb-0">
-                                    Switch between light and dark themes. (Coming soon)
-                                </p>
-                            </div>
-                            <div className="form-check form-switch">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    checked={settings.darkMode}
-                                    onChange={() => handleToggle("darkMode")}
                                     style={{ width: "3em", height: "1.5em", cursor: "pointer" }}
                                 />
                             </div>
@@ -170,9 +150,9 @@ const Settings = () => {
                                     Change your password from the Profile page.
                                 </p>
                             </div>
-                            <a href="/profile" className="btn-outline-custom px-3 py-2 text-decoration-none">
+                            <Link to="/profile" className="btn-outline-custom px-3 py-2 text-decoration-none">
                                 Go to Profile
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </FadeIn>
@@ -251,8 +231,8 @@ const Settings = () => {
                         </AnimatePresence>
                     </div>
                 </FadeIn>
-            </div>
-        </PageTransition>
+            </div >
+        </PageTransition >
     );
 };
 

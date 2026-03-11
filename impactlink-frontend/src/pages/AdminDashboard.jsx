@@ -3,7 +3,7 @@ import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { fadeUp, gpuStyles, staggerContainer } from "../utils/animations";
-import { LayoutDashboard, Users, Database, Settings, LogOut, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { LayoutDashboard, Users, Database, Settings, LogOut, CheckCircle, XCircle, Trash2, Edit2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import PageTransition from "../components/PageTransition";
 
@@ -28,9 +28,10 @@ const AdminDashboard = () => {
 
   const toggleCampaignStatus = async (id, currentStatus) => {
     try {
+      const newStatus = currentStatus === "active" ? "cancelled" : "active";
       await api.put(
         `/admin/dashboard/campaigns/${id}/status`,
-        { isActive: !currentStatus },
+        { status: newStatus },
         { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );
       fetchCampaigns();
@@ -68,8 +69,8 @@ const AdminDashboard = () => {
   ];
 
   const activeInactiveData = [
-    { name: "Active", value: campaigns.filter(c => c.isActive).length },
-    { name: "Inactive", value: campaigns.filter(c => !c.isActive).length },
+    { name: "Active", value: campaigns.filter(c => c.status === "active").length },
+    { name: "Inactive", value: campaigns.filter(c => c.status !== "active").length },
   ];
 
   const COLORS = ["#047857", "#dc3545"];
@@ -91,22 +92,22 @@ const AdminDashboard = () => {
                 </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                <Link to="/admin/admindashboard" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
                   <Database size={20} />
                   <span className="d-none d-md-inline">Campaigns</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                <Link to="/admin/users" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
                   <Users size={20} />
                   <span className="d-none d-md-inline">Users</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item mb-2">
-                <a href="#" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
-                  <Settings size={20} />
-                  <span className="d-none d-md-inline">Settings</span>
-                </a>
+                <Link to="/admin/donations" className="nav-link text-muted rounded d-flex align-items-center gap-2 hover-bg-light">
+                  <Database size={20} />
+                  <span className="d-none d-md-inline">Donations</span>
+                </Link>
               </li>
             </ul>
 
@@ -122,9 +123,6 @@ const AdminDashboard = () => {
         <div className="col p-4 p-md-5 overflow-auto" style={{ maxHeight: "100vh" }}>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="fw-bold m-0">Admin Dashboard</h2>
-            <button className="btn btn-primary-custom d-flex align-items-center gap-2">
-              My Database
-            </button>
           </div>
 
           {/* Top Charts Row */}
@@ -213,17 +211,24 @@ const AdminDashboard = () => {
                             <td className="py-3 text-dark fw-medium">{camp.title}</td>
                             <td className="py-3 text-muted">{camp.creator || "Unknown"}</td>
                             <td className="py-3">
-                              <span className={`badge rounded-pill ${camp.isActive ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger"}`}>
-                                {camp.isActive ? "Active" : "Inactive"}
+                              <span className={`badge rounded-pill ${camp.status === "active" ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger"}`}>
+                                {camp.status === "active" ? "Active" : "Inactive"}
                               </span>
                             </td>
                             <td className="py-3 text-end">
-                              <button
-                                className={`btn btn-sm ${camp.isActive ? "btn-outline-warning" : "btn-outline-success"} me-2`}
-                                onClick={() => toggleCampaignStatus(camp._id, camp.isActive)}
-                                title={camp.isActive ? "Deactivate" : "Activate"}
+                              <Link
+                                to={`/edit-campaign/${camp._id}`}
+                                className="btn btn-sm btn-outline-primary me-2"
+                                title="Edit"
                               >
-                                {camp.isActive ? <XCircle size={16} /> : <CheckCircle size={16} />}
+                                <Edit2 size={16} />
+                              </Link>
+                              <button
+                                className={`btn btn-sm ${camp.status === "active" ? "btn-outline-warning" : "btn-outline-success"} me-2`}
+                                onClick={() => toggleCampaignStatus(camp._id, camp.status)}
+                                title={camp.status === "active" ? "Deactivate" : "Activate"}
+                              >
+                                {camp.status === "active" ? <XCircle size={16} /> : <CheckCircle size={16} />}
                               </button>
                               <button
                                 className="btn btn-sm btn-outline-danger"

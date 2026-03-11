@@ -36,7 +36,7 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-white border-bottom py-3">
+    <nav className="navbar navbar-expand-lg bg-white border-bottom py-3 sticky-top" style={{ zIndex: 1030 }}>
       <div className="container">
         <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" to="/">
           {/* Placeholder for logo icon */}
@@ -69,6 +69,9 @@ function Navbar() {
             </li>
             <li className="nav-item">
               <Link className="nav-link text-dark fw-medium mx-2" to="/about">About Us</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link text-dark fw-medium mx-2" to="/contact">Contact</Link>
             </li>
             {userRole === "admin" && (
               <li className="nav-item">

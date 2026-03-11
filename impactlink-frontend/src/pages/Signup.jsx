@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { scaleIn, fadeUp, buttonTap, gpuStyles } from "../utils/animations";
 import { useAuth } from "../context/AuthContext";
@@ -92,7 +92,7 @@ const Signup = () => {
         </form>
 
         <p className="text-center text-muted small mt-4 pt-3 border-top">
-          Already have an account? <a href="/login" className="text-primary fw-medium">Login</a>
+          Already have an account? <Link to="/login" className="text-primary fw-medium">Login</Link>
         </p>
       </m.div>
     </PageTransition>
