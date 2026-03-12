@@ -136,6 +136,46 @@ const Settings = () => {
                     </div>
                 </FadeIn>
 
+                {/* Appearance */}
+                <FadeIn delay={0.05}>
+                    <div className="custom-card p-4 p-md-5 mb-4">
+                        <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
+                            <span className="text-primary" style={{ fontSize: "1.2rem" }}>🌓</span> Appearance
+                        </h5>
+
+                        <div className="d-flex justify-content-between align-items-center py-3">
+                            <div>
+                                <h6 className="fw-bold mb-1">Dark Mode</h6>
+                                <p className="text-muted small mb-0">
+                                    Switch the application to a darker theme for easier viewing in low light.
+                                </p>
+                            </div>
+                            <div className="form-check form-switch">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={settings.darkMode || false}
+                                    onChange={async () => {
+                                        const newValue = !settings.darkMode;
+                                        setSettings(prev => ({ ...prev, darkMode: newValue }));
+                                        
+                                        // Immediately update user context for instant feedback
+                                        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+                                        const updatedUser = { ...storedUser, settings: { ...storedUser.settings, darkMode: newValue } };
+                                        localStorage.setItem("user", JSON.stringify(updatedUser));
+                                        
+                                        await handleToggle("darkMode");
+                                        // dispatch event to force context to re-render if it doesn't automatically
+                                        window.dispatchEvent(new Event("storage"));
+                                    }}
+                                    style={{ width: "3em", height: "1.5em", cursor: "pointer" }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </FadeIn>
+
                 {/* Security */}
                 <FadeIn delay={0.1}>
                     <div className="custom-card p-4 p-md-5 mb-4">

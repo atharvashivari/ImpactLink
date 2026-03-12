@@ -31,7 +31,7 @@ const CampaignDetails = () => {
   const progress = Math.min((raised / goal) * 100, 100);
 
   return (
-    <PageTransition className="w-100">
+    <PageTransition className="w-100" title={campaign ? campaign.title : "Campaign Details"} description={campaign ? campaign.description?.substring(0, 150) : "View campaign details and support the cause on ImpactLink."}>
       {/* Hero Section */}
       <section className="full-width-section bg-dark text-white d-flex align-items-end position-relative" style={{ height: "450px", marginTop: "-2rem" }}>
         <div className="position-absolute w-100 h-100"

@@ -26,7 +26,7 @@ const Home = () => {
   };
 
   return (
-    <PageTransition className="w-100">
+    <PageTransition className="w-100" title="Home" description="Discover and back innovative campaigns on ImpactLink. Empower creators and make an impact today.">
       {/* ─── Hero Section ─── */}
       <section className="full-width-section hero-section" style={{ marginTop: "-2rem" }}>
         <img

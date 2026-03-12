@@ -18,6 +18,13 @@ exports.createDonation = asyncHandler(async (req, res) => {
 
 // Get all donations
 exports.getAllDonations = asyncHandler(async (req, res) => {
-  const donations = await Donation.find().populate("campaign donor", "title name");
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 100;
+  const skip = (page - 1) * limit;
+
+  const donations = await Donation.find()
+    .skip(skip)
+    .limit(limit)
+    .populate("campaign donor", "title name");
   res.json(donations);
 });

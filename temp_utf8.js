@@ -1,11 +1,11 @@
-const asyncHandler = require('express-async-handler');
+﻿const asyncHandler = require('express-async-handler');
 const Campaign = require("../models/Campaign");
 const User = require("../models/User");
 const Donation = require("../models/Donation");
 
 // Get all campaigns
 const getAllCampaigns = asyncHandler(async (req, res) => {
-  const campaigns = await Campaign.find().limit(100);
+  const campaigns = await Campaign.find();
   res.json(campaigns);
 });
 
@@ -40,7 +40,7 @@ const deleteCampaign = asyncHandler(async (req, res) => {
 // Get all users
 const getAllUsers = asyncHandler(async (req, res) => {
   // Exclude passwords
-  const users = await User.find().select("-password").sort({ createdAt: -1 }).limit(100);
+  const users = await User.find().select("-password").sort({ createdAt: -1 });
   res.json(users);
 });
 
@@ -49,8 +49,7 @@ const getAllDonations = asyncHandler(async (req, res) => {
   const donations = await Donation.find()
     .populate("campaign", "title goalAmount raisedAmount")
     .populate("donor", "name email")
-    .sort({ date: -1 })
-    .limit(100);
+    .sort({ date: -1 });
   res.json(donations);
 });
 

@@ -103,13 +103,13 @@ function Navbar() {
                       transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                     >
                       <li>
-                        <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Profile</Link>
+                        <Link className="dropdown-item py-2" to="/profile" onClick={() => setDropdownOpen(false)}>Profile</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Dashboard</Link>
+                        <Link className="dropdown-item py-2" to="/dashboard" onClick={() => setDropdownOpen(false)}>Dashboard</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)} style={{ color: "#1f2937" }}>Settings</Link>
+                        <Link className="dropdown-item py-2" to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
                       </li>
                       <li><hr className="dropdown-divider" /></li>
                       <li>

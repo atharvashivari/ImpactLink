@@ -56,7 +56,7 @@ const Dashboard = () => {
   const totalDonated = myContributions.reduce((sum, cont) => sum + (Number(cont.amount) || 0), 0);
 
   return (
-    <PageTransition className="container-fluid bg-light min-vh-100 p-0">
+    <PageTransition className="container-fluid bg-light min-vh-100 p-0" title="Dashboard" description="Manage your campaigns, track donations, and configure your ImpactLink account.">
       <div className="row g-0">
 
         {/* Sidebar */}

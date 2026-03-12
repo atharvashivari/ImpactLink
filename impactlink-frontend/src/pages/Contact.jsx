@@ -28,7 +28,7 @@ const Contact = () => {
   };
 
   return (
-    <PageTransition className="page-container py-5 mt-2">
+    <PageTransition className="page-container py-5 mt-2" title="Contact Us" description="Get in touch with the ImpactLink team. We're here to help with your crowdfunding journey.">
       <FadeIn>
         <div className="text-center mb-5">
           <span className="badge rounded-pill px-3 py-2 mb-3 fw-medium" style={{ background: "#D1FAE5", color: "#047857" }}>Contact Us</span>

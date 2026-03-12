@@ -7,7 +7,7 @@ import PageTransition from "../components/PageTransition";
 
 const About = () => {
   return (
-    <PageTransition className="w-100">
+    <PageTransition className="w-100" title="About Us" description="Learn more about ImpactLink. We are a community-driven platform empowering creators to bring their ideas to life.">
       {/* Hero Section */}
       <section className="full-width-section bg-dark text-white d-flex align-items-center position-relative" style={{ height: "450px", marginTop: "-2rem" }}>
         <div className="position-absolute w-100 h-100"

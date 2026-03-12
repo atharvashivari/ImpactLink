@@ -48,7 +48,7 @@ const Campaigns = () => {
   };
 
   return (
-    <PageTransition className="page-container py-5 mt-2">
+    <PageTransition className="page-container py-5 mt-2" title="Discover Campaigns" description="Explore active campaigns on ImpactLink. Support causes you care about and help them reach their goals.">
       <FadeIn>
         <div className="text-center mb-5">
           <h2 className="display-5 fw-bold mb-3">Featured Campaigns</h2>

@@ -77,8 +77,16 @@ exports.getAllCampaigns = asyncHandler(async (req, res) => {
     }
   }
 
+  // Parse pagination parameters
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 100;
+  const skip = (page - 1) * limit;
+
   // Query MongoDB
-  const campaigns = await Campaign.find().populate("creator", "name email");
+  const campaigns = await Campaign.find()
+    .skip(skip)
+    .limit(limit)
+    .populate("creator", "name email");
 
   // Store in cache
   if (redis) {
@@ -182,7 +190,13 @@ exports.getCampaignDonations = asyncHandler(async (req, res) => {
     throw new Error("You do not have permission to view this campaign's donations");
   }
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 100;
+  const skip = (page - 1) * limit;
+
   const donations = await Donation.find({ campaign: req.params.id })
+    .skip(skip)
+    .limit(limit)
     .populate("donor", "name email")
     .sort({ date: -1 });
 

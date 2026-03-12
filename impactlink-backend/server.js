@@ -87,16 +87,21 @@ const adminRoutes = require("./routes/admin");
 const admindashRoutes = require("./routes/admindash");
 const userRoutes = require("./routes/user");
 
+const uploadRoutes = require("./routes/upload");
+
 // ─── Use Routes ────────────────────────────────────────────────
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/donations", generalLimiter, donationRoutes);
 app.use("/api/payments", generalLimiter, paymentRoutes);
 app.use("/api/contact", generalLimiter, contactRoutes);
+app.use("/api/upload", generalLimiter, uploadRoutes);
 app.use("/api", generalLimiter, dashboardRoutes);
 app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/admin/dashboard", generalLimiter, admindashRoutes);
 app.use("/api/user", generalLimiter, userRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ─── 404 Catch-all ─────────────────────────────────────────────
 app.use("*", (req, res) => {

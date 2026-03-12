@@ -34,6 +34,14 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (user?.settings?.darkMode) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+  }, [user]);
+
   const login = (token, userData) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));

@@ -197,15 +197,31 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <label className="label-custom">
-                                        <Camera size={14} className="me-1" /> Avatar URL
+                                        <Camera size={14} className="me-1" /> Upload Avatar
                                     </label>
                                     <input
-                                        type="url"
-                                        name="avatar"
-                                        className="input-custom"
-                                        placeholder="https://example.com/photo.jpg"
-                                        value={profile?.avatar || ""}
-                                        onChange={handleProfileChange}
+                                        type="file"
+                                        className="input-custom form-control"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+                                            
+                                            const formData = new FormData();
+                                            formData.append("image", file);
+                                            
+                                            try {
+                                                setMessage({ type: "info", text: "Uploading avatar..." });
+                                                const res = await api.post("/upload/avatar", formData, {
+                                                    headers: { "Content-Type": "multipart/form-data" }
+                                                });
+                                                setProfile({ ...profile, avatar: api.defaults.baseURL.replace('/api', '') + res.data.url });
+                                                setMessage({ type: "success", text: "Avatar uploaded! Click Save Changes to confirm." });
+                                            } catch (err) {
+                                                console.error(err);
+                                                setMessage({ type: "danger", text: "Failed to upload avatar." });
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
