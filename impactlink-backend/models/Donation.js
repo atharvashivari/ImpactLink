@@ -5,6 +5,8 @@ const DonationSchema = new mongoose.Schema({
   donor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   amount: { type: Number, required: true },
   paymentStatus: { type: String, enum: ["Pending", "Completed", "Failed"], default: "Pending" },
+  razorpayPaymentId: { type: String, default: "" },
+  razorpayOrderId: { type: String, default: "" },
   date: { type: Date, default: Date.now },
 });
 

@@ -1,0 +1,40 @@
+name: ImpactLink CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'impactlink-backend/package-lock.json'
+        
+    - name: Install dependencies
+      working-directory: ./impactlink-backend
+      run: npm ci
+
+    - name: Run Backend Tests
+      working-directory: ./impactlink-backend
+      run: npm test
+      env:
+        PORT: 5000
+        MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+        RAZORPAY_KEY_ID: mock_key_id
+        RAZORPAY_KEY_SECRET: mock_key_secret
+        REDIS_URL: ""

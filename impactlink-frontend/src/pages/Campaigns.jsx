@@ -1,135 +1,155 @@
 import React, { useState, useEffect } from "react";
+import { m, AnimatePresence } from "framer-motion";
+import api from "../utils/api";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import { fadeUp, staggerContainer, cardHover, buttonTap, gpuStyles } from "../utils/animations";
+import PageTransition from "../components/PageTransition";
+import FadeIn from "../components/reactbits/FadeIn";
+import { Search } from "lucide-react";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setError("Unauthorized: Please log in to view campaigns.");
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await fetch("http://localhost:5000/api/campaigns", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 401) {
-          throw new Error("Unauthorized: Your session may have expired. Please log in again.");
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Error ${response.status}: ${errorData.msg || "Failed to fetch campaigns"}`);
-        }
-
-        const data = await response.json();
-        console.log("✅ Campaigns Fetched:", data);
-        setCampaigns(data);
-      } catch (err) {
-        console.error("⛔ Fetch Error:", err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+        const response = await api.get("/campaigns");
+        setCampaigns(response.data);
+      } catch (err) { setError(err.message); } finally { setLoading(false); }
     };
-
     fetchCampaigns();
   }, []);
 
-  // Sorting Function
   const getSortedCampaigns = () => {
-    let sortedCampaigns = [...campaigns];
+    let sorted = [...campaigns];
 
-    if (filter === "trending") {
-      sortedCampaigns.sort((a, b) => b.raisedAmount - a.raisedAmount);
-    } else if (filter === "new") {
-      sortedCampaigns.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-    } else if (filter === "highest") {
-      sortedCampaigns.sort((a, b) => b.goalAmount - a.goalAmount);
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      sorted = sorted.filter(c =>
+        c.title?.toLowerCase().includes(q) ||
+        c.description?.toLowerCase().includes(q)
+      );
     }
 
-    return sortedCampaigns;
+    if (filter === "trending") {
+      sorted.sort((a, b) => (Number(b.raisedAmount) || 0) - (Number(a.raisedAmount) || 0));
+    } else if (filter === "new") {
+      sorted.sort((a, b) => new Date(b.startDate || b.createdAt || Date.now()) - new Date(a.startDate || a.createdAt || Date.now()));
+    } else if (filter === "highest") {
+      sorted.sort((a, b) => (Number(b.goalAmount) || 0) - (Number(a.goalAmount) || 0));
+    }
+    return sorted;
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">Explore Campaigns</h2>
+    <PageTransition className="page-container py-5 mt-2" title="Discover Campaigns" description="Explore active campaigns on ImpactLink. Support causes you care about and help them reach their goals.">
+      <FadeIn>
+        <div className="text-center mb-5">
+          <h2 className="display-5 fw-bold mb-3">Featured Campaigns</h2>
+          <p className="text-muted lead mx-auto" style={{ maxWidth: "600px" }}>
+            Discover and support innovative projects, urgent causes, and creative ideas from around the world.
+          </p>
+        </div>
+      </FadeIn>
 
-      {/* Filter Buttons */}
+      {/* Search Bar */}
       <div className="d-flex justify-content-center mb-4">
-        <button className="btn btn-outline-primary me-2" onClick={() => setFilter("trending")}>
-          Trending
-        </button>
-        <button className="btn btn-outline-primary me-2" onClick={() => setFilter("new")}>
-          New
-        </button>
-        <button className="btn btn-outline-primary" onClick={() => setFilter("highest")}>
-          Highest Funded
-        </button>
+        <div className="position-relative" style={{ maxWidth: "500px", width: "100%" }}>
+          <Search size={18} className="position-absolute top-50 translate-middle-y" style={{ left: "14px", color: "var(--text-muted)" }} />
+          <input
+            type="text"
+            className="input-custom ps-5"
+            placeholder="Search campaigns by name or keyword..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* Loading and Error Handling */}
-      {loading && <p className="text-center">Loading campaigns...</p>}
-      {error && <p className="alert alert-danger text-center">{error}</p>}
+      {/* Filter Buttons */}
+      <m.div className="d-flex justify-content-center flex-wrap gap-2 mb-5" variants={staggerContainer(0.06)} initial="hidden" animate="visible">
+        {[
+          { key: "all", label: "All Projects" },
+          { key: "trending", label: "Trending" },
+          { key: "new", label: "Newest" },
+          { key: "highest", label: "Highest Goal" },
+        ].map((btn) => (
+          <m.button
+            key={btn.key}
+            className={`btn ${filter === btn.key ? "btn-primary-custom px-4" : "btn-outline-custom border-0 text-muted px-4"}`}
+            onClick={() => setFilter(btn.key)}
+            style={{ borderRadius: "50rem", backgroundColor: filter === btn.key ? "var(--primary-color)" : "transparent" }}
+            variants={fadeUp}
+            {...buttonTap}
+          >
+            {btn.label}
+          </m.button>
+        ))}
+      </m.div>
+
+      {loading && <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>}
+      {error && <div className="alert alert-danger text-center max-w-md mx-auto">{error}</div>}
 
       {/* Campaign Grid */}
       {!loading && campaigns.length > 0 && (
-        <div className="row">
-          {getSortedCampaigns().map((campaign) => (
-            <div key={campaign._id} className="col-md-4 mb-4">
-              <div className="card shadow-sm h-100 d-flex flex-column">
-                <img
-                  src={campaign.image || "https://via.placeholder.com/300"}
-                  className="card-img-top"
-                  alt={campaign.title}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{campaign.title}</h5>
-                  <p className="text-muted">{campaign.description}</p>
-                  <p>
-                    <strong>Goal:</strong> ${campaign.goalAmount}
-                    <br />
-                    <strong>Raised:</strong> ${campaign.raisedAmount}
-                  </p>
-                  <div className="mt-auto">
-                    <Link to={`/campaign/${campaign._id}`}>
-                      <button className="btn btn-primary w-100">View Campaign</button>
-                    </Link>
+        <m.div
+          className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+          variants={staggerContainer(0.08)}
+          initial="hidden"
+          animate="visible"
+          key={filter}
+        >
+          {getSortedCampaigns().map((campaign) => {
+            const raised = Number(campaign.raisedAmount) || 0;
+            const goal = Number(campaign.goalAmount) || 1;
+            const progress = Math.min((raised / goal) * 100, 100);
+
+            return (
+              <m.div className="col" key={campaign._id} variants={fadeUp} layout style={gpuStyles}>
+                <m.div className="custom-card h-100 border-0 p-3 pt-4 card-hover-shadow" {...cardHover} style={gpuStyles}>
+                  <div className="position-relative mb-3">
+                    <img src={campaign.image || "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1470&auto=format&fit=crop"} className="img-fluid rounded w-100 object-fit-cover" alt={campaign.title} style={{ height: "200px" }} />
+                    <span className="position-absolute top-0 end-0 m-2 badge bg-white text-primary shadow-sm border">Campaign</span>
                   </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className="card-body px-1 py-2 d-flex flex-column">
+                    <h5 className="fw-bold mb-2 text-dark">{campaign.title}</h5>
+                    <p className="text-muted small mb-4" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{campaign.description}</p>
+                    <div className="d-flex justify-content-between align-items-center mb-1 mt-auto">
+                      <span className="text-muted small">Raised</span>
+                      <span className="fw-bold text-primary">₹{raised.toLocaleString()}</span>
+                    </div>
+                    <div className="progress mb-2" style={{ height: "6px" }}>
+                      <div className="progress-bar bg-primary" role="progressbar" style={{ width: `${progress}%` }}></div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <span className="text-muted small">{Math.round(progress)}% of ₹{goal.toLocaleString()}</span>
+                      <span className="text-muted small">{campaign.status ? campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) : "Active"}</span>
+                    </div>
+                    <Link to={`/campaign/${campaign._id}`} className="btn-outline-custom w-100 d-block text-center mt-2">View Details</Link>
+                  </div>
+                </m.div>
+              </m.div>
+            );
+          })}
+        </m.div>
       )}
 
-      {/* No Campaigns Message */}
       {!loading && campaigns.length === 0 && !error && (
-        <p className="text-center mt-4">No campaigns available.</p>
+        <FadeIn>
+          <div className="text-center py-5 mt-4">
+            <h4 className="fw-bold text-dark mb-3">No campaigns found</h4>
+            <p className="text-muted mb-4">We couldn't find any campaigns matching your criteria.</p>
+            <Link to="/create-campaign" className="btn-primary-custom px-4 py-2">Start a Campaign</Link>
+          </div>
+        </FadeIn>
       )}
-
-      {/* Create Campaign Button */}
-      <div className="text-center mt-4">
-        <Link to="/create-campaign">
-          <button className="btn btn-success">Create New Campaign</button>
-        </Link>
-      </div>
-    </div>
+    </PageTransition>
   );
 };
 

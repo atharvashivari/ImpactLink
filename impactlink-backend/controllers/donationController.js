@@ -1,28 +1,30 @@
+const asyncHandler = require('express-async-handler');
 const Donation = require("../models/Donation");
 
 // Create a donation
-exports.createDonation = async (req, res) => {
-  try {
-    const { campaign, donor, amount, paymentStatus } = req.body;
+exports.createDonation = asyncHandler(async (req, res) => {
+  const { campaign, amount, paymentStatus } = req.body;
+  const donor = req.user.id;
 
-    if (!campaign || !donor) {
-      return res.status(400).json({ error: "Campaign ID and Donor ID are required" });
-    }
-
-    const newDonation = new Donation({ campaign, donor, amount, paymentStatus });
-    await newDonation.save();
-    res.status(201).json(newDonation);
-  } catch (error) {
-    res.status(500).json({ msg: "Server error", error: error.message });
+  if (!campaign) {
+    res.status(400);
+    throw new Error("Campaign ID is required");
   }
-};
+
+  const newDonation = new Donation({ campaign, donor, amount, paymentStatus });
+  await newDonation.save();
+  res.status(201).json(newDonation);
+});
 
 // Get all donations
-exports.getAllDonations = async (req, res) => {
-  try {
-    const donations = await Donation.find().populate("campaign donor", "title name");
-    res.json(donations);
-  } catch (error) {
-    res.status(500).json({ msg: "Server error", error: error.message });
-  }
-};
+exports.getAllDonations = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 100;
+  const skip = (page - 1) * limit;
+
+  const donations = await Donation.find()
+    .skip(skip)
+    .limit(limit)
+    .populate("campaign donor", "title name");
+  res.json(donations);
+});
