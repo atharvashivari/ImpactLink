@@ -37,11 +37,14 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 // CORS — allow multiple possible frontend origins
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  process.env.ALLOWED_ORIGINS, // Support comma-separated strings from Render env
+  "https://impact-link-six.vercel.app",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
   "http://localhost:3000",
-].filter(Boolean);
+].flatMap(item => (item ? item.split(",") : []))
+ .map(origin => origin.trim().replace(/\/$/, "")); // Normalize: trim and remove trailing slash
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -49,6 +52,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      logger.warn(`🚫 CORS Blocked origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
