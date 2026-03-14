@@ -1,3 +1,4 @@
+require('./instrument.js');
 const path = require('path');
 require("dotenv").config({ path: path.resolve(__dirname, '.env') });
 require('./config/validateEnv')();
@@ -15,17 +16,7 @@ const Sentry = require("@sentry/node");
 
 const app = express();
 
-// ─── Sentry Error Tracking Setup (Phase 4) ─────────────────────
-// Wrapped in try-catch to prevent startup crashes if misconfigured locally
-try {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    tracesSampleRate: 1.0, 
-  });
-  logger.info('👁️ Sentry Error Tracking initialized (v10)');
-} catch (err) {
-  logger.warn('⚠️ Sentry initialization failed or skipped.');
-}
+// Sentry initialization is now handled in instrument.js
 
 // ─── Security Middleware ───────────────────────────────────────
 app.use(helmet()); // Sets various HTTP security headers
@@ -62,13 +53,17 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" })); // Limit payload size
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiter — general (100 requests per 15 min per IP)
+// Rate limiter — general (200 requests per 15 min per IP)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many requests, please try again later." },
+  handler: (req, res, next, options) => {
+    logger.warn(`🚫 Rate limit exceeded (429) for IP ${req.ip} on route ${req.originalUrl}`);
+    res.status(options.statusCode).json(options.message);
+  }
 });
 
 // Stricter rate limiter for auth routes (15 requests per 15 min)
@@ -106,6 +101,8 @@ app.use("/api/admin/dashboard", generalLimiter, admindashRoutes);
 app.use("/api/user", generalLimiter, userRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 
 // ─── 404 Catch-all ─────────────────────────────────────────────
 app.use("*", (req, res) => {

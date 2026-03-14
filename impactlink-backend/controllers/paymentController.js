@@ -35,6 +35,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
 // Verify payment and record donation
 exports.verifyPayment = asyncHandler(async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, campaignId, amount } = req.body;
+  logger.debug(`[Payment] Started verification for Order: ${razorpay_order_id}, Payment: ${razorpay_payment_id}`);
 
   // Verify Razorpay signature
   const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -44,6 +45,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
     .digest("hex");
 
   if (expectedSignature !== razorpay_signature) {
+    logger.warn(`[Payment] Invalid signature for ${razorpay_payment_id}`);
     res.status(400);
     throw new Error("Payment verification failed — invalid signature");
   }
@@ -59,6 +61,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
   // Prevent Replay Attacks (SEC-01)
   const existingDonation = await Donation.findOne({ razorpayPaymentId: razorpay_payment_id });
   if (existingDonation) {
+    logger.warn(`[Payment] Replay attack or duplicate processing attempted for ${razorpay_payment_id}`);
     res.status(400);
     throw new Error("Payment already processed");
   }
@@ -66,10 +69,12 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
   // Prevent Cron Collisions (LOG-02) & Inactive Donations
   const campaignData = await Campaign.findById(campaignId);
   if (!campaignData || new Date() > new Date(campaignData.endDate)) {
+    logger.warn(`[Payment] Attempted donation to ended/missing campaign ${campaignId}`);
     res.status(400);
     throw new Error("Campaign has ended, donations are no longer accepted.");
   }
   if (campaignData.status !== "active") {
+    logger.warn(`[Payment] Attempted donation to inactive campaign ${campaignId}`);
     res.status(400);
     throw new Error("This campaign is currently inactive and cannot accept donations.");
   }
@@ -80,6 +85,8 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
 
   try {
     session.startTransaction();
+
+    logger.debug(`[Payment] Transaction started for ${razorpay_payment_id}`);
 
     // Create donation record inside session
     finalDonation = new Donation({
@@ -122,6 +129,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
       logger.warn(`⚠️ Failed to queue donation receipt email: ${emailErr.message}`);
     }
 
+    logger.debug(`[Payment] Completed verify response for ${razorpay_payment_id}`);
     res.status(200).json({
       message: "Payment verified and donation recorded",
       donation: finalDonation,
